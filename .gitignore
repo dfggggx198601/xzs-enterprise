@@ -1,0 +1,47 @@
+# maven
+target/
+*.war
+*.jar
+*.zip
+*.tar
+*.tar.gz
+
+# eclipse
+.settings/
+.project
+.classpath
+
+# idea
+.idea/
+*.ipr
+*.iml
+*.iws
+
+# node
+node_modules/
+dist/
+.env
+.env.local
+
+# vue build output
+source/vue/xzs-admin/admin/
+source/vue/xzs-student/student/
+
+# react native / expo
+source/rn/xzs-app/.expo/
+source/rn/xzs-app/android/
+source/rn/xzs-app/ios/
+
+# temp
+logs/
+*.log
+*.cache
+*.diff
+*.patch
+*.tmp
+
+# system
+.DS_Store
+Thumbs.db
+
+*.class

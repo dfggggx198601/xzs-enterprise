@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mindskip.xzs.repository.DailyPracticeAnswerMapper">
+  <resultMap id="BaseResultMap" type="com.mindskip.xzs.domain.DailyPracticeAnswer">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="daily_practice_id" jdbcType="INTEGER" property="dailyPracticeId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="practice_date" jdbcType="DATE" property="practiceDate" />
+    <result column="question_ids" jdbcType="VARCHAR" property="questionIds" />
+    <result column="answer_content" jdbcType="VARCHAR" property="answerContent" />
+    <result column="question_count" jdbcType="INTEGER" property="questionCount" />
+    <result column="question_correct" jdbcType="INTEGER" property="questionCorrect" />
+    <result column="score" jdbcType="INTEGER" property="score" />
+    <result column="do_time" jdbcType="INTEGER" property="doTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, daily_practice_id, user_id, practice_date, question_ids, answer_content,
+    question_count, question_correct, score, do_time, status, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_daily_practice_answer
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_daily_practice_answer
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.mindskip.xzs.domain.DailyPracticeAnswer" useGeneratedKeys="true" keyProperty="id">
+    insert into t_daily_practice_answer (id, daily_practice_id, user_id, practice_date,
+      question_ids, answer_content, question_count, question_correct, score, do_time,
+      status, create_time)
+    values (#{id,jdbcType=INTEGER}, #{dailyPracticeId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+      #{practiceDate,jdbcType=DATE}, #{questionIds,jdbcType=VARCHAR}, #{answerContent,jdbcType=VARCHAR},
+      #{questionCount,jdbcType=INTEGER}, #{questionCorrect,jdbcType=INTEGER}, #{score,jdbcType=INTEGER},
+      #{doTime,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mindskip.xzs.domain.DailyPracticeAnswer" useGeneratedKeys="true" keyProperty="id">
+    insert into t_daily_practice_answer
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">id,</if>
+      <if test="dailyPracticeId != null">daily_practice_id,</if>
+      <if test="userId != null">user_id,</if>
+      <if test="practiceDate != null">practice_date,</if>
+      <if test="questionIds != null">question_ids,</if>
+      <if test="answerContent != null">answer_content,</if>
+      <if test="questionCount != null">question_count,</if>
+      <if test="questionCorrect != null">question_correct,</if>
+      <if test="score != null">score,</if>
+      <if test="doTime != null">do_time,</if>
+      <if test="status != null">status,</if>
+      <if test="createTime != null">create_time,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">#{id,jdbcType=INTEGER},</if>
+      <if test="dailyPracticeId != null">#{dailyPracticeId,jdbcType=INTEGER},</if>
+      <if test="userId != null">#{userId,jdbcType=INTEGER},</if>
+      <if test="practiceDate != null">#{practiceDate,jdbcType=DATE},</if>
+      <if test="questionIds != null">#{questionIds,jdbcType=VARCHAR},</if>
+      <if test="answerContent != null">#{answerContent,jdbcType=VARCHAR},</if>
+      <if test="questionCount != null">#{questionCount,jdbcType=INTEGER},</if>
+      <if test="questionCorrect != null">#{questionCorrect,jdbcType=INTEGER},</if>
+      <if test="score != null">#{score,jdbcType=INTEGER},</if>
+      <if test="doTime != null">#{doTime,jdbcType=INTEGER},</if>
+      <if test="status != null">#{status,jdbcType=INTEGER},</if>
+      <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mindskip.xzs.domain.DailyPracticeAnswer">
+    update t_daily_practice_answer
+    <set>
+      <if test="dailyPracticeId != null">daily_practice_id = #{dailyPracticeId,jdbcType=INTEGER},</if>
+      <if test="userId != null">user_id = #{userId,jdbcType=INTEGER},</if>
+      <if test="practiceDate != null">practice_date = #{practiceDate,jdbcType=DATE},</if>
+      <if test="questionIds != null">question_ids = #{questionIds,jdbcType=VARCHAR},</if>
+      <if test="answerContent != null">answer_content = #{answerContent,jdbcType=VARCHAR},</if>
+      <if test="questionCount != null">question_count = #{questionCount,jdbcType=INTEGER},</if>
+      <if test="questionCorrect != null">question_correct = #{questionCorrect,jdbcType=INTEGER},</if>
+      <if test="score != null">score = #{score,jdbcType=INTEGER},</if>
+      <if test="doTime != null">do_time = #{doTime,jdbcType=INTEGER},</if>
+      <if test="status != null">status = #{status,jdbcType=INTEGER},</if>
+      <if test="createTime != null">create_time = #{createTime,jdbcType=TIMESTAMP},</if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mindskip.xzs.domain.DailyPracticeAnswer">
+    update t_daily_practice_answer
+    set daily_practice_id = #{dailyPracticeId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      practice_date = #{practiceDate,jdbcType=DATE},
+      question_ids = #{questionIds,jdbcType=VARCHAR},
+      answer_content = #{answerContent,jdbcType=VARCHAR},
+      question_count = #{questionCount,jdbcType=INTEGER},
+      question_correct = #{questionCorrect,jdbcType=INTEGER},
+      score = #{score,jdbcType=INTEGER},
+      do_time = #{doTime,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="page" resultMap="BaseResultMap" parameterType="com.mindskip.xzs.viewmodel.admin.dailypractice.DailyPracticeAnswerPageRequestVM">
+    select
+    <include refid="Base_Column_List" />
+    from t_daily_practice_answer
+    <where>
+      <if test="dailyPracticeId != null">
+        and daily_practice_id = #{dailyPracticeId}
+      </if>
+      <if test="gradeLevel != null">
+        and daily_practice_id in (select id from t_daily_practice where deleted=0 and grade_level = #{gradeLevel})
+      </if>
+    </where>
+  </select>
+
+  <select id="getByPracticeAndUserAndDate" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_daily_practice_answer
+    where daily_practice_id = #{dailyPracticeId,jdbcType=INTEGER}
+    and user_id = #{userId,jdbcType=INTEGER}
+    and practice_date = #{practiceDate,jdbcType=DATE}
+  </select>
+
+  <select id="getByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    from t_daily_practice_answer
+    where user_id = #{userId,jdbcType=INTEGER}
+    order by create_time desc
+  </select>
+
+  <select id="getByDailyPracticeId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    from t_daily_practice_answer
+    where daily_practice_id = #{dailyPracticeId,jdbcType=INTEGER}
+    order by create_time desc
+  </select>
+
+</mapper>
