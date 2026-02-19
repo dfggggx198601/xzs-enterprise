@@ -38,38 +38,6 @@
       </div>
     </el-row>
     <el-row class="app-item-contain">
-      <h3 class="index-title-h3" style="border-left: solid 10px #3651d4;">任务中心</h3>
-      <div style="padding-left: 15px">
-        <el-collapse  v-loading="taskLoading"  accordion v-if="taskList.length!==0">
-          <el-collapse-item :title="taskItem.title" :name="taskItem.id" :key="taskItem.id" v-for="taskItem in taskList">
-            <table class="index-task-table">
-              <tr v-for="paperItem in taskItem.paperItems" :key="paperItem.examPaperId">
-                <td class="index-task-table-paper">
-                  {{paperItem.examPaperName}}
-                </td>
-                <td width="70px">
-                  <el-tag :type="statusTagFormatter(paperItem.status)" v-if="paperItem.status !== null" size="mini">
-                    {{ statusTextFormatter(paperItem.status) }}
-                  </el-tag>
-                </td>
-                <td width="80px">
-                  <router-link target="_blank" :to="{path:'/do',query:{id:paperItem.examPaperId}}" v-if="paperItem.status === null">
-                    <el-button  type="text" size="small">开始答题</el-button>
-                  </router-link>
-                  <router-link target="_blank" :to="{path:'/edit',query:{id:paperItem.examPaperAnswerId}}" v-else-if="paperItem.status === 1">
-                    <el-button  type="text" size="small">批改试卷</el-button>
-                  </router-link>
-                  <router-link target="_blank" :to="{path:'/read',query:{id:paperItem.examPaperAnswerId}}" v-else-if="paperItem.status === 2">
-                    <el-button  type="text" size="small">查看试卷</el-button>
-                  </router-link>
-                </td>
-              </tr>
-            </table>
-          </el-collapse-item>
-        </el-collapse>
-      </div>
-    </el-row>
-    <el-row class="app-item-contain">
       <h3 class="index-title-h3">固定试卷</h3>
       <div style="padding-left: 15px">
         <el-col :span="4" v-for="(item, index) in fixedPaper" :key="index" :offset="index > 0 ? 1 : 0">
@@ -114,7 +82,6 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
 import indexApi from '@/api/dashboard'
 import dailyPracticeApi from '@/api/dailyPractice'
 export default {
@@ -124,8 +91,6 @@ export default {
       timeLimitPaper: [],
       pushPaper: [],
       loading: false,
-      taskLoading: false,
-      taskList: [],
       dailyLoading: false,
       dailyPracticeList: []
     }
@@ -140,12 +105,6 @@ export default {
       _this.loading = false
     })
 
-    this.taskLoading = true
-    indexApi.task().then(re => {
-      _this.taskList = re.response
-      _this.taskLoading = false
-    })
-
     this.dailyLoading = true
     dailyPracticeApi.list().then(re => {
       _this.dailyPracticeList = re.response
@@ -155,21 +114,8 @@ export default {
     })
   },
   methods: {
-    statusTagFormatter (status) {
-      return this.enumFormat(this.statusTag, status)
-    },
-    statusTextFormatter (status) {
-      return this.enumFormat(this.statusEnum, status)
-    }
   },
   computed: {
-    ...mapGetters('enumItem', [
-      'enumFormat'
-    ]),
-    ...mapState('enumItem', {
-      statusEnum: state => state.exam.examPaperAnswer.statusEnum,
-      statusTag: state => state.exam.examPaperAnswer.statusTag
-    })
   }
 }
 </script>

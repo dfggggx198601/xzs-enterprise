@@ -157,30 +157,7 @@ const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/task',
-    component: Layout,
-    name: 'TaskPage',
-    meta: {
-      title: '任务管理',
-      icon: 'task'
-    },
-    alwaysShow: true,
-    children: [
-      {
-        path: 'list',
-        component: () => import('@/views/task/list'),
-        name: 'TaskListPage',
-        meta: { title: '任务列表', noCache: true }
-      },
-      {
-        path: 'edit',
-        component: () => import('@/views/task/edit'),
-        name: 'TaskEditPage',
-        meta: { title: '任务创建', noCache: true }
-      }
-    ]
-  },
+
   {
     path: '/education',
     component: Layout,
