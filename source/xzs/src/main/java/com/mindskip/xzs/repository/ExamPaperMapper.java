@@ -17,8 +17,6 @@ public interface ExamPaperMapper extends BaseMapper<ExamPaper> {
 
     List<ExamPaper> page(ExamPaperPageRequestVM requestVM);
 
-    List<ExamPaper> taskExamPage(ExamPaperPageRequestVM requestVM);
-
     List<ExamPaper> studentPage(ExamPaperPageVM requestVM);
 
     List<PaperInfo> indexPaper(PaperFilter paperFilter);
@@ -26,8 +24,4 @@ public interface ExamPaperMapper extends BaseMapper<ExamPaper> {
     Integer selectAllCount();
 
     List<KeyValue> selectCountByDate(@Param("startTime") Date startTime, @Param("endTime") Date endTime);
-
-    int updateTaskPaper(@Param("taskId") Integer taskId,@Param("paperIds") List<Integer> paperIds);
-
-    int clearTaskPaper(@Param("paperIds") List<Integer> paperIds);
 }

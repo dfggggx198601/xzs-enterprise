@@ -1,12 +1,10 @@
 package com.mindskip.xzs.listener;
 
 import com.mindskip.xzs.domain.*;
-import com.mindskip.xzs.domain.enums.ExamPaperTypeEnum;
 import com.mindskip.xzs.domain.enums.QuestionTypeEnum;
 import com.mindskip.xzs.event.CalculateExamPaperAnswerCompleteEvent;
 import com.mindskip.xzs.service.ExamPaperAnswerService;
 import com.mindskip.xzs.service.ExamPaperQuestionCustomerAnswerService;
-import com.mindskip.xzs.service.TaskExamCustomerAnswerService;
 import com.mindskip.xzs.service.TextContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -29,7 +27,6 @@ public class CalculateExamPaperAnswerListener implements ApplicationListener<Cal
     private final ExamPaperAnswerService examPaperAnswerService;
     private final ExamPaperQuestionCustomerAnswerService examPaperQuestionCustomerAnswerService;
     private final TextContentService textContentService;
-    private final TaskExamCustomerAnswerService examCustomerAnswerService;
 
     /**
      * Instantiates a new Calculate exam paper answer listener.
@@ -37,14 +34,12 @@ public class CalculateExamPaperAnswerListener implements ApplicationListener<Cal
      * @param examPaperAnswerService                 the exam paper answer service
      * @param examPaperQuestionCustomerAnswerService the exam paper question customer answer service
      * @param textContentService                     the text content service
-     * @param examCustomerAnswerService              the exam customer answer service
      */
     @Autowired
-    public CalculateExamPaperAnswerListener(ExamPaperAnswerService examPaperAnswerService, ExamPaperQuestionCustomerAnswerService examPaperQuestionCustomerAnswerService, TextContentService textContentService, TaskExamCustomerAnswerService examCustomerAnswerService) {
+    public CalculateExamPaperAnswerListener(ExamPaperAnswerService examPaperAnswerService, ExamPaperQuestionCustomerAnswerService examPaperQuestionCustomerAnswerService, TextContentService textContentService) {
         this.examPaperAnswerService = examPaperAnswerService;
         this.examPaperQuestionCustomerAnswerService = examPaperQuestionCustomerAnswerService;
         this.textContentService = textContentService;
-        this.examCustomerAnswerService = examCustomerAnswerService;
     }
 
     @Override
@@ -68,14 +63,5 @@ public class CalculateExamPaperAnswerListener implements ApplicationListener<Cal
             d.setExamPaperAnswerId(examPaperAnswer.getId());
         });
         examPaperQuestionCustomerAnswerService.insertList(examPaperQuestionCustomerAnswers);
-
-        switch (ExamPaperTypeEnum.fromCode(examPaper.getPaperType())) {
-            case Task: {
-                examCustomerAnswerService.insertOrUpdate(examPaper, examPaperAnswer, now);
-                break;
-            }
-            default:
-                break;
-        }
     }
 }
