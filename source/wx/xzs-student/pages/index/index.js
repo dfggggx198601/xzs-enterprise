@@ -7,8 +7,7 @@ Page({
     spinShow: false,
     fixedPaper: [],
     pushPaper: [],
-    timeLimitPaper: [],
-    taskList: []
+    timeLimitPaper: []
   },
   onLoad: function() {
     this.setData({
@@ -45,21 +44,5 @@ Page({
       app.message(e, 'error')
     })
 
-    app.formPost('/api/wx/student/dashboard/task', null).then(res => {
-      _this.setData({
-        spinShow: false
-      });
-      wx.stopPullDownRefresh()
-      if (res.code === 1) {
-        _this.setData({
-          taskList: res.response,
-        });
-      }
-    }).catch(e => {
-      _this.setData({
-        spinShow: false
-      });
-      app.message(e, 'error')
-    })
   }
 })
