@@ -79,7 +79,10 @@ public class ExamPaperAnswerController extends BaseApiController {
         userEventLog.setContent(content);
         eventPublisher.publishEvent(new CalculateExamPaperAnswerCompleteEvent(examPaperAnswerInfo));
         eventPublisher.publishEvent(new UserEvent(userEventLog));
-        return RestResponse.ok(scoreVm);
+        java.util.Map<String, Object> result = new java.util.HashMap<>();
+        result.put("id", examPaperAnswer.getId());
+        result.put("score", scoreVm);
+        return RestResponse.ok(result);
     }
 
 

@@ -7,6 +7,7 @@ import com.mindskip.xzs.domain.enums.ExamPaperAnswerStatusEnum;
 import com.mindskip.xzs.domain.enums.QuestionTypeEnum;
 import com.mindskip.xzs.repository.ExamPaperAnswerMapper;
 import com.mindskip.xzs.repository.ExamPaperMapper;
+import com.mindskip.xzs.repository.ExamPaperQuestionCustomerAnswerMapper;
 import com.mindskip.xzs.repository.QuestionMapper;
 import com.mindskip.xzs.repository.SubjectMapper;
 import com.mindskip.xzs.service.ExamPaperAnswerService;
@@ -32,15 +33,18 @@ public class ExamPaperAnswerServiceImpl extends BaseServiceImpl<ExamPaperAnswer>
     private final ExamPaperMapper examPaperMapper;
     private final QuestionMapper questionMapper;
     private final SubjectMapper subjectMapper;
+    private final ExamPaperQuestionCustomerAnswerMapper examPaperQuestionCustomerAnswerMapper;
 
     @Autowired
     public ExamPaperAnswerServiceImpl(ExamPaperAnswerMapper examPaperAnswerMapper, ExamPaperMapper examPaperMapper,
-            QuestionMapper questionMapper, SubjectMapper subjectMapper) {
+            QuestionMapper questionMapper, SubjectMapper subjectMapper,
+            ExamPaperQuestionCustomerAnswerMapper examPaperQuestionCustomerAnswerMapper) {
         super(examPaperAnswerMapper);
         this.examPaperAnswerMapper = examPaperAnswerMapper;
         this.examPaperMapper = examPaperMapper;
         this.questionMapper = questionMapper;
         this.subjectMapper = subjectMapper;
+        this.examPaperQuestionCustomerAnswerMapper = examPaperQuestionCustomerAnswerMapper;
     }
 
     @Override
@@ -202,7 +206,41 @@ public class ExamPaperAnswerServiceImpl extends BaseServiceImpl<ExamPaperAnswer>
 
     @Override
     public ExamPaperSubmitVM examPaperAnswerToVM(Integer id) {
-        return null;
+        ExamPaperAnswer examPaperAnswer = examPaperAnswerMapper.selectByPrimaryKey(id);
+        if (examPaperAnswer == null) {
+            return null;
+        }
+        ExamPaperSubmitVM vm = new ExamPaperSubmitVM();
+        vm.setId(examPaperAnswer.getId());
+        vm.setDoTime(examPaperAnswer.getDoTime());
+        vm.setScore(ExamUtil.scoreToVM(examPaperAnswer.getUserScore()));
+
+        List<ExamPaperQuestionCustomerAnswer> customerAnswers =
+                examPaperQuestionCustomerAnswerMapper.selectListByPaperAnswerId(id);
+        List<ExamPaperSubmitItemVM> items = new ArrayList<>();
+        if (customerAnswers != null) {
+            for (ExamPaperQuestionCustomerAnswer ca : customerAnswers) {
+                ExamPaperSubmitItemVM item = new ExamPaperSubmitItemVM();
+                item.setId(ca.getId());
+                item.setQuestionId(ca.getQuestionId());
+                item.setDoRight(ca.getDoRight());
+                item.setItemOrder(ca.getItemOrder());
+                item.setScore(ExamUtil.scoreToVM(ca.getCustomerScore()));
+                item.setQuestionScore(ExamUtil.scoreToVM(ca.getQuestionScore()));
+
+                String answer = ca.getAnswer();
+                if (answer != null && answer.contains(",")) {
+                    item.setContentArray(ExamUtil.contentToArray(answer));
+                    item.setContent(answer);
+                } else {
+                    item.setContent(answer);
+                    item.setContentArray(new ArrayList<>());
+                }
+                items.add(item);
+            }
+        }
+        vm.setAnswerItems(items);
+        return vm;
     }
 
     @Override
