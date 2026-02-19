@@ -17,7 +17,7 @@ public class ExamPaperAnswer implements Serializable {
     private String paperName;
 
     /**
-     * 试卷类型( 1固定试卷 4.时段试卷 6.任务试卷)
+     * 试卷类型( 1固定试卷 4.时段试卷)
      */
     private Integer paperType;
 
@@ -70,8 +70,6 @@ public class ExamPaperAnswer implements Serializable {
      * 提交时间
      */
     private Date createTime;
-
-    private Integer taskExamId;
 
     public Integer getId() {
         return id;
@@ -183,13 +181,5 @@ public class ExamPaperAnswer implements Serializable {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    public Integer getTaskExamId() {
-        return taskExamId;
-    }
-
-    public void setTaskExamId(Integer taskExamId) {
-        this.taskExamId = taskExamId;
     }
 }
