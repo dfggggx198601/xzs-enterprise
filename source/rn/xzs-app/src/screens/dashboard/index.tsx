@@ -21,12 +21,6 @@ interface DashboardData {
   classPaper: any[];
 }
 
-interface TaskItem {
-  id: number;
-  title: string;
-  createTime: string;
-}
-
 const quickActions = [
   { key: 'ExamList', icon: 'file-document-outline' as const, label: '试卷中心', color: colors.primary },
   { key: 'DailyPractice', icon: 'lightning-bolt' as const, label: '每日一练', color: '#E67E22' },
@@ -40,18 +34,15 @@ export default function DashboardScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [dashData, setDashData] = useState<DashboardData | null>(null);
-  const [tasks, setTasks] = useState<TaskItem[]>([]);
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
   const loadData = useCallback(async () => {
     try {
-      const [dashRes, taskRes, msgRes] = await Promise.all([
+      const [dashRes, msgRes] = await Promise.all([
         dashboardApi.index(),
-        dashboardApi.task(),
         userApi.getMessageCount(),
       ]);
       if (dashRes.code === 1) setDashData(dashRes.response);
-      if (taskRes.code === 1) setTasks(taskRes.response || []);
       if (msgRes.code === 1) setUnreadCount(msgRes.response || 0);
     } catch {}
   }, []);
@@ -74,7 +65,6 @@ export default function DashboardScreen() {
 
   const stats = [
     { icon: 'file-document-check-outline' as const, value: paperCount, label: '可用试卷', color: colors.primary, target: 'ExamList' },
-    { icon: 'clock-check-outline' as const, value: tasks.length, label: '待办任务', color: colors.warning, target: 'ExamList' },
     { icon: 'email-outline' as const, value: unreadCount, label: '未读消息', color: colors.secondary, target: 'Messages' },
   ];
 
@@ -142,34 +132,6 @@ export default function DashboardScreen() {
               </TouchableOpacity>
             ))}
           </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>待办任务</Text>
-          {tasks.length === 0 ? (
-            <View style={styles.emptyCard}>
-              <MaterialCommunityIcons name="check-circle-outline" size={40} color={colors.textLight} />
-              <Text style={styles.emptyText}>暂无待办任务</Text>
-            </View>
-          ) : (
-            tasks.map((task) => (
-              <TouchableOpacity
-                key={task.id}
-                style={styles.taskCard}
-                onPress={() => navigation.navigate('ExamTaking', { id: task.id })}
-                activeOpacity={0.7}
-              >
-                <View style={styles.taskLeft}>
-                  <View style={styles.taskDot} />
-                  <View>
-                    <Text style={styles.taskTitle} numberOfLines={1}>{task.title}</Text>
-                    <Text style={styles.taskTime}>{task.createTime}</Text>
-                  </View>
-                </View>
-                <MaterialCommunityIcons name="chevron-right" size={20} color={colors.textLight} />
-              </TouchableOpacity>
-            ))
-          )}
         </View>
       </ScrollView>
     </Animated.View>
@@ -315,37 +277,5 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     color: colors.textLight,
     marginTop: spacing.sm,
-  },
-  taskCard: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.sm,
-    ...shadows.sm,
-  },
-  taskLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  taskDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.primary,
-    marginRight: spacing.md,
-  },
-  taskTitle: {
-    fontSize: fontSize.md,
-    fontWeight: '500',
-    color: colors.text,
-  },
-  taskTime: {
-    fontSize: fontSize.xs,
-    color: colors.textLight,
-    marginTop: 2,
   },
 });

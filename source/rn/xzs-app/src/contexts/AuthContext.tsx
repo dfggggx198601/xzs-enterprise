@@ -75,11 +75,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [refreshUser]);
 
   const logout = useCallback(async () => {
+    await apiClient.clearSession();
+    setUser(null);
     try {
       await authApi.logout();
-    } finally {
-      await apiClient.clearSession();
-      setUser(null);
+    } catch {
+      // best-effort server logout
     }
   }, []);
 

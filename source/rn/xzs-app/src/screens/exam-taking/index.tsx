@@ -121,7 +121,7 @@ export default function ExamTakingScreen() {
         if (res.code === 1) {
           navigation.replace('ExamResult', {
             id: res.response?.id,
-            score: res.response?.userScore,
+            score: parseFloat(res.response?.score || '0'),
           });
         }
       } catch {} finally {

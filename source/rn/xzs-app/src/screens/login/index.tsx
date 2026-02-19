@@ -27,11 +27,27 @@ export default function LoginScreen() {
   const slideAnim = useRef(new Animated.Value(30)).current;
   const shakeAnim = useRef(new Animated.Value(0)).current;
 
+  // DEV_AUTO_LOGIN: Remove after testing
+  const DEV_AUTO_LOGIN = false;
+
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
       Animated.timing(slideAnim, { toValue: 0, duration: 800, useNativeDriver: true }),
     ]).start();
+
+    if (DEV_AUTO_LOGIN) {
+      (async () => {
+        setLoading(true);
+        try {
+          await login('student', '123456');
+        } catch (e: any) {
+          setError(e.message || '自动登录失败');
+        } finally {
+          setLoading(false);
+        }
+      })();
+    }
   }, []);
 
   const shake = () => {

@@ -11,7 +11,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { examPaperAnswerApi } from '../../api';
 import { colors, spacing, borderRadius, fontSize, shadows } from '../../theme';
-import { formatSeconds } from '../../utils';
 
 export default function RecordsScreen() {
   const navigation = useNavigation<any>();
@@ -69,7 +68,7 @@ export default function RecordsScreen() {
         )}
         <View style={styles.metaItem}>
           <MaterialCommunityIcons name="clock-outline" size={13} color={colors.textLight} />
-          <Text style={styles.metaText}>{formatSeconds(item.doTime)}</Text>
+          <Text style={styles.metaText}>{item.doTime}</Text>
         </View>
         <Text style={styles.metaText}>{item.createTime}</Text>
       </View>

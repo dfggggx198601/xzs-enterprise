@@ -39,6 +39,7 @@ export default function ExamListScreen() {
     try {
       const res = await examPaperApi.pageList({
         subjectId: selectedSubject,
+        paperType: 1,
         pageIndex: page,
         pageSize: 10,
       });

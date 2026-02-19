@@ -15,6 +15,7 @@ interface ApiResponse<T = any> {
 class ApiClient {
   private client: AxiosInstance;
   private cookie: string | null = null;
+  private clearingSession: boolean = false;
 
   constructor() {
     this.client = axios.create({
@@ -37,12 +38,12 @@ class ApiClient {
     });
 
     this.client.interceptors.response.use(
-      (response: AxiosResponse) => {
+      async (response: AxiosResponse) => {
         const setCookie = response.headers['set-cookie'];
-        if (setCookie) {
+        if (setCookie && !this.clearingSession) {
           const cookieStr = Array.isArray(setCookie) ? setCookie[0] : setCookie;
           this.cookie = cookieStr;
-          AsyncStorage.setItem('session_cookie', cookieStr);
+          await AsyncStorage.setItem('session_cookie', cookieStr);
         }
         return response;
       },
@@ -69,8 +70,10 @@ class ApiClient {
   }
 
   async clearSession() {
+    this.clearingSession = true;
     this.cookie = null;
     await AsyncStorage.removeItem('session_cookie');
+    this.clearingSession = false;
   }
 
   setBaseURL(url: string) {
@@ -88,7 +91,6 @@ export const authApi = {
 
 export const dashboardApi = {
   index: () => apiClient.post('/api/student/dashboard/index'),
-  task: () => apiClient.post('/api/student/dashboard/task'),
 };
 
 export const examPaperApi = {

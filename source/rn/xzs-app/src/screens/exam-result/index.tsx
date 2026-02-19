@@ -29,8 +29,9 @@ export default function ExamResultScreen() {
       const res = await examPaperAnswerApi.read(id);
       if (res.code === 1 && res.response) {
         setResult(res.response);
-        if (res.response.userScore !== undefined) {
-          setScore(res.response.userScore);
+        const answer = res.response.answer;
+        if (answer && answer.score !== undefined) {
+          setScore(parseFloat(answer.score));
         }
       }
     } catch {}
@@ -38,8 +39,8 @@ export default function ExamResultScreen() {
 
   const scoreColor = score >= 80 ? colors.secondary : score >= 60 ? colors.warning : colors.error;
 
-  const totalQuestions = result?.answerItems?.length || 0;
-  const correctCount = result?.answerItems?.filter((a: any) => a.doRight).length || 0;
+  const totalQuestions = result?.answer?.answerItems?.length || 0;
+  const correctCount = result?.answer?.answerItems?.filter((a: any) => a.doRight).length || 0;
   const wrongCount = totalQuestions - correctCount;
 
   const allQuestions: any[] = [];
@@ -50,7 +51,7 @@ export default function ExamResultScreen() {
   });
 
   const getAnswerForQuestion = (questionId: number) => {
-    return result?.answerItems?.find((a: any) => a.questionId === questionId);
+    return result?.answer?.answerItems?.find((a: any) => a.questionId === questionId);
   };
 
   return (
