@@ -34,4 +34,6 @@ public interface QuestionService extends BaseService<Question> {
     void deleteBank(String tag);
 
     int importQuestions(List<QuestionImportVM> importList, Integer subjectId, String tag, Integer userId);
+
+    List<KeyValue> countByTagGroupByType(String tag);
 }

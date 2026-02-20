@@ -141,4 +141,60 @@
     order by create_time desc
   </select>
 
+  <select id="getBestByPracticeAndUserAndDate" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_daily_practice_answer
+    where daily_practice_id = #{dailyPracticeId,jdbcType=INTEGER}
+    and user_id = #{userId,jdbcType=INTEGER}
+    and practice_date = #{practiceDate,jdbcType=DATE}
+    order by score desc
+    limit 1
+  </select>
+
+  <select id="countByPracticeAndUserAndDate" resultType="int">
+    select count(*)
+    from t_daily_practice_answer
+    where daily_practice_id = #{dailyPracticeId,jdbcType=INTEGER}
+    and user_id = #{userId,jdbcType=INTEGER}
+    and practice_date = #{practiceDate,jdbcType=DATE}
+  </select>
+
+  <select id="pageByUserId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_daily_practice_answer
+    where user_id = #{userId,jdbcType=INTEGER}
+    order by create_time desc
+  </select>
+
+  <select id="pageBest" resultMap="BaseResultMap" parameterType="com.mindskip.xzs.viewmodel.admin.dailypractice.DailyPracticeAnswerPageRequestVM">
+    select
+    <include refid="Base_Column_List" />
+    from t_daily_practice_answer
+    where id in (
+      select min(a.id) from t_daily_practice_answer a
+      inner join (
+        select daily_practice_id, user_id, practice_date, max(score) as max_score
+        from t_daily_practice_answer
+        <where>
+          <if test="dailyPracticeId != null">
+            and daily_practice_id = #{dailyPracticeId}
+          </if>
+        </where>
+        group by daily_practice_id, user_id, practice_date
+      ) b on a.daily_practice_id = b.daily_practice_id
+        and a.user_id = b.user_id
+        and a.practice_date = b.practice_date
+        and a.score = b.max_score
+      <where>
+        <if test="dailyPracticeId != null">
+          and a.daily_practice_id = #{dailyPracticeId}
+        </if>
+      </where>
+      group by a.daily_practice_id, a.user_id, a.practice_date
+    )
+    order by id desc
+  </select>
+
 </mapper>

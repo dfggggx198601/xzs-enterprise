@@ -328,4 +328,9 @@ public class QuestionServiceImpl extends BaseServiceImpl<Question> implements Qu
         item.setItemUuid(UUID.randomUUID().toString());
         items.add(item);
     }
+
+    @Override
+    public List<KeyValue> countByTagGroupByType(String tag) {
+        return questionMapper.countByTagGroupByType(tag);
+    }
 }

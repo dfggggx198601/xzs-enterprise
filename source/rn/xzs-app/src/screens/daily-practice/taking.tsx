@@ -77,6 +77,7 @@ export default function DailyPracticeTakingScreen() {
 
     const doSubmit = async () => {
       setSubmitting(true);
+      const questionIds = questions.map(q => q.id.toString()).join(',');
       const answerItems = questions.map((q) => {
         const a = answers[q.id];
         return {
@@ -86,19 +87,26 @@ export default function DailyPracticeTakingScreen() {
         };
       });
       try {
-        const res = await dailyPracticeApi.submit({ id: practiceId, answerItems });
+        const res = await dailyPracticeApi.submit({ practiceId, questionIds, doTime: 0, answers: answerItems });
         if (res.code === 1) {
           const resp = res.response;
+          let msg = `得分：${resp.score}分\n共${resp.totalCount}题，正确${resp.correctCount}题`;
+          if (resp.isNewBest) {
+            msg += `\n🎉 恭喜！刷新今日最高分！`;
+          } else {
+            msg += `\n今日最高分：${resp.todayBestScore}分`;
+          }
+          msg += `\n今日已练习${resp.todayAttempts}次`;
           Alert.alert(
             '练习结果',
-            `得分：${resp.score}分\n共${resp.questionCount}题，正确${resp.questionCorrect}题`,
+            msg,
             [{ text: '返回', onPress: () => navigation.goBack() }]
           );
         } else {
           Alert.alert('提交失败', res.message || '请重试');
         }
-      } catch {
-        Alert.alert('提交失败', '网络错误，请重试');
+      } catch (e: any) {
+        Alert.alert('提交失败', e.message || '网络错误，请重试');
       } finally {
         setSubmitting(false);
       }

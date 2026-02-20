@@ -32,8 +32,8 @@
       </span>
     </el-dialog>
     
-    <el-dialog title="一键组卷" :visible.sync="paperDialogVisible" width="400px">
-      <el-form :model="paperForm" label-width="80px">
+    <el-dialog title="一键组卷" :visible.sync="paperDialogVisible" width="600px">
+      <el-form :model="paperForm" label-width="100px">
         <el-form-item label="题库标签">
           <el-input v-model="paperForm.tag" disabled></el-input>
         </el-form-item>
@@ -53,10 +53,53 @@
         <el-form-item label="建议时长" required>
           <el-input v-model="paperForm.suggestTime" placeholder="分钟"></el-input>
         </el-form-item>
+        <el-divider content-position="left">题型配置（从题库随机抽取）</el-divider>
+        <el-form-item label="单选题">
+          <el-col :span="8">
+            <el-input-number v-model="paperForm.singleCount" :min="0" :max="typeCountMap[1] || 0" size="small"></el-input-number>
+          </el-col>
+          <el-col :span="6">
+            <span style="margin-left:8px;color:#909399;font-size:12px;">共 {{typeCountMap[1] || 0}} 题</span>
+          </el-col>
+          <el-col :span="10">
+            <span style="margin-right:4px;font-size:12px;">每题</span>
+            <el-input-number v-model="paperForm.singleScore" :min="1" :max="100" size="small" style="width:100px;"></el-input-number>
+            <span style="margin-left:4px;font-size:12px;">分</span>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="多选题">
+          <el-col :span="8">
+            <el-input-number v-model="paperForm.multiCount" :min="0" :max="typeCountMap[2] || 0" size="small"></el-input-number>
+          </el-col>
+          <el-col :span="6">
+            <span style="margin-left:8px;color:#909399;font-size:12px;">共 {{typeCountMap[2] || 0}} 题</span>
+          </el-col>
+          <el-col :span="10">
+            <span style="margin-right:4px;font-size:12px;">每题</span>
+            <el-input-number v-model="paperForm.multiScore" :min="1" :max="100" size="small" style="width:100px;"></el-input-number>
+            <span style="margin-left:4px;font-size:12px;">分</span>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="判断题">
+          <el-col :span="8">
+            <el-input-number v-model="paperForm.judgeCount" :min="0" :max="typeCountMap[3] || 0" size="small"></el-input-number>
+          </el-col>
+          <el-col :span="6">
+            <span style="margin-left:8px;color:#909399;font-size:12px;">共 {{typeCountMap[3] || 0}} 题</span>
+          </el-col>
+          <el-col :span="10">
+            <span style="margin-right:4px;font-size:12px;">每题</span>
+            <el-input-number v-model="paperForm.judgeScore" :min="1" :max="100" size="small" style="width:100px;"></el-input-number>
+            <span style="margin-left:4px;font-size:12px;">分</span>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="试卷总分">
+          <span style="font-size:16px;font-weight:bold;color:#409EFF;">{{ computedTotalScore }} 分</span>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="paperDialogVisible = false">取 消</el-button>
-        <el-button type="primary" :loading="paperLoading" @click="submitCreatePaper">确 定</el-button>
+        <el-button type="primary" :loading="paperLoading" @click="submitCreatePaper">生 成</el-button>
       </span>
     </el-dialog>
 
@@ -115,6 +158,7 @@ export default {
       importLoading: false,
       importFile: null,
       importSubjectFilter: null,
+      typeCountMap: {},
       editForm: {
         oldTag: '',
         newTag: ''
@@ -124,7 +168,13 @@ export default {
         name: '',
         level: null,
         subjectId: null,
-        suggestTime: 60
+        suggestTime: 60,
+        singleCount: 0,
+        multiCount: 0,
+        judgeCount: 0,
+        singleScore: 5,
+        multiScore: 10,
+        judgeScore: 5
       },
       importForm: {
         tag: '',
@@ -193,6 +243,22 @@ export default {
         this.paperForm.level = null
         this.paperForm.subjectId = null
         this.paperForm.suggestTime = 60
+        this.paperForm.singleCount = 0
+        this.paperForm.multiCount = 0
+        this.paperForm.judgeCount = 0
+        this.paperForm.singleScore = 5
+        this.paperForm.multiScore = 10
+        this.paperForm.judgeScore = 5
+        this.typeCountMap = {}
+        questionApi.bankTypeCount(row.name).then(response => {
+            if (response.code === 1 && response.response) {
+                let map = {}
+                response.response.forEach(item => {
+                    map[item.name] = parseInt(item.value)
+                })
+                this.typeCountMap = map
+            }
+        })
         this.paperDialogVisible = true
     },
     levelChange () {
@@ -212,8 +278,23 @@ export default {
             this.$message.error('请选择业务范围')
             return
         }
+        if (this.computedTotalScore <= 0) {
+            this.$message.error('请至少选择一种题型并设置数量')
+            return
+        }
         this.paperLoading = true
-        post('/api/admin/exam/paper/createFromBank', this.paperForm).then(response => {
+        post('/api/admin/exam/paper/randomCreate', {
+            subjectId: this.paperForm.subjectId,
+            tag: this.paperForm.tag,
+            name: this.paperForm.name,
+            suggestTime: this.paperForm.suggestTime,
+            singleCount: this.paperForm.singleCount,
+            multiCount: this.paperForm.multiCount,
+            judgeCount: this.paperForm.judgeCount,
+            singleScore: String(this.paperForm.singleScore),
+            multiScore: String(this.paperForm.multiScore),
+            judgeScore: String(this.paperForm.judgeScore)
+        }).then(response => {
             if(response.code === 1) {
                 this.$message.success('试卷生成成功！已为您跳转到试卷列表。')
                 this.paperDialogVisible = false
@@ -283,6 +364,11 @@ export default {
     ...mapActions('exam', { initSubject: 'initSubject' })
   },
   computed: {
+    computedTotalScore() {
+      return (this.paperForm.singleCount || 0) * (this.paperForm.singleScore || 0) +
+             (this.paperForm.multiCount || 0) * (this.paperForm.multiScore || 0) +
+             (this.paperForm.judgeCount || 0) * (this.paperForm.judgeScore || 0)
+    },
     ...mapState('user', {
       levelEnum: state => state.levelEnum
     }),

@@ -12,6 +12,7 @@ import com.mindskip.xzs.service.QuestionService;
 import com.mindskip.xzs.utility.DateTimeUtil;
 import com.mindskip.xzs.utility.JsonUtil;
 import com.mindskip.xzs.viewmodel.admin.question.QuestionEditRequestVM;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,12 +48,14 @@ public class DailyPracticeController extends BaseApiController {
             map.put("description", p.getDescription());
             map.put("questionCount", p.getQuestionCount());
             map.put("tag", p.getTag());
-            DailyPracticeAnswer answer = dailyPracticeAnswerService.getByPracticeAndUserAndDate(
+            DailyPracticeAnswer bestAnswer = dailyPracticeAnswerService.getBestByPracticeAndUserAndDate(
                     p.getId(), user.getId(), today);
-            map.put("todayCompleted", answer != null);
-            if (answer != null) {
-                map.put("todayScore", answer.getScore());
-                map.put("todayCorrect", answer.getQuestionCorrect());
+            int todayAttempts = dailyPracticeAnswerService.countByPracticeAndUserAndDate(
+                    p.getId(), user.getId(), today);
+            map.put("todayAttempts", todayAttempts);
+            if (bestAnswer != null) {
+                map.put("todayBestScore", bestAnswer.getScore());
+                map.put("todayBestCorrect", bestAnswer.getQuestionCorrect());
             }
             return map;
         }).collect(Collectors.toList());
@@ -109,8 +112,22 @@ public class DailyPracticeController extends BaseApiController {
 
         if (answers != null) {
             for (Map<String, Object> ans : answers) {
-                Object correctObj = ans.get("correct");
-                if (correctObj != null && (Boolean) correctObj) {
+                Object questionIdObj = ans.get("questionId");
+                if (questionIdObj == null) continue;
+                Integer questionId = questionIdObj instanceof Integer ? (Integer) questionIdObj : Integer.parseInt(questionIdObj.toString());
+                Question question = questionService.selectById(questionId);
+                if (question == null) continue;
+                QuestionEditRequestVM vm = questionService.getQuestionEditRequestVM(question);
+                String userAnswer = ans.get("content") != null ? ans.get("content").toString().trim() : "";
+                String correctAnswer = vm.getCorrect() != null ? vm.getCorrect().trim() : "";
+                boolean isCorrect = false;
+                if (question.getQuestionType() == 1 || question.getQuestionType() == 2 || question.getQuestionType() == 3) {
+                    isCorrect = userAnswer.equalsIgnoreCase(correctAnswer);
+                } else if (question.getQuestionType() == 4) {
+                    isCorrect = userAnswer.equalsIgnoreCase(correctAnswer);
+                }
+                ans.put("correct", isCorrect);
+                if (isCorrect) {
                     correctCount++;
                 }
             }
@@ -133,18 +150,30 @@ public class DailyPracticeController extends BaseApiController {
 
         dailyPracticeAnswerService.insertByFilter(answer);
 
+        DailyPracticeAnswer bestAnswer = dailyPracticeAnswerService.getBestByPracticeAndUserAndDate(
+                practiceId, user.getId(), DateTimeUtil.getToday());
+        int todayBestScore = bestAnswer != null ? bestAnswer.getScore() : score;
+        boolean isNewBest = (bestAnswer == null || score >= todayBestScore);
+        int todayAttempts = dailyPracticeAnswerService.countByPracticeAndUserAndDate(
+                practiceId, user.getId(), DateTimeUtil.getToday());
+
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("score", score);
         result.put("correctCount", correctCount);
         result.put("totalCount", totalCount);
+        result.put("isNewBest", isNewBest);
+        result.put("todayBestScore", todayBestScore);
+        result.put("todayAttempts", todayAttempts);
         return RestResponse.ok(result);
     }
 
     @RequestMapping(value = "/history", method = RequestMethod.POST)
-    public RestResponse<List<Map<String, Object>>> history() {
+    public RestResponse<Map<String, Object>> history(@RequestBody Map<String, Object> body) {
         User user = getCurrentUser();
-        List<DailyPracticeAnswer> answers = dailyPracticeAnswerService.getByUserId(user.getId());
-        List<Map<String, Object>> result = answers.stream().map(a -> {
+        Integer pageIndex = body.get("pageIndex") != null ? (Integer) body.get("pageIndex") : 1;
+        Integer pageSize = body.get("pageSize") != null ? (Integer) body.get("pageSize") : 10;
+        PageInfo<DailyPracticeAnswer> pageInfo = dailyPracticeAnswerService.pageByUserId(user.getId(), pageIndex, pageSize);
+        List<Map<String, Object>> list = pageInfo.getList().stream().map(a -> {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("id", a.getId());
             map.put("dailyPracticeId", a.getDailyPracticeId());
@@ -160,6 +189,10 @@ public class DailyPracticeController extends BaseApiController {
             map.put("createTime", DateTimeUtil.dateFormat(a.getCreateTime()));
             return map;
         }).collect(Collectors.toList());
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("list", list);
+        result.put("total", pageInfo.getTotal());
+        result.put("pageNum", pageInfo.getPageNum());
         return RestResponse.ok(result);
     }
 }

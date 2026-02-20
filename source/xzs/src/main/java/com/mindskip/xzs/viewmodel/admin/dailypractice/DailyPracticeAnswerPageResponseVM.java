@@ -26,6 +26,8 @@ public class DailyPracticeAnswerPageResponseVM {
 
     private String createTime;
 
+    private Boolean isBest;
+
     public Integer getId() {
         return id;
     }
@@ -120,5 +122,13 @@ public class DailyPracticeAnswerPageResponseVM {
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
+    }
+
+    public Boolean getIsBest() {
+        return isBest;
+    }
+
+    public void setIsBest(Boolean isBest) {
+        this.isBest = isBest;
     }
 }

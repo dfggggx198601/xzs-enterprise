@@ -53,7 +53,7 @@ export default {
       _this.formLoading = true
       dailyPracticeApi.start(id).then(re => {
         let data = re.response
-        _this.practiceTitle = data.title
+        _this.practiceTitle = data.practiceTitle
         _this.questions = data.questions
         _this.initAnswers()
         _this.formLoading = false
@@ -78,8 +78,10 @@ export default {
       let _this = this
       _this.formLoading = true
       let submitData = {
-        id: _this.practiceId,
-        answerItems: _this.answerItems.map(item => ({
+        practiceId: _this.practiceId,
+        questionIds: _this.questions.map(q => q.id).join(','),
+        doTime: 0,
+        answers: _this.answerItems.map(item => ({
           questionId: item.questionId,
           content: item.content,
           contentArray: item.contentArray
@@ -88,10 +90,17 @@ export default {
       dailyPracticeApi.submit(submitData).then(re => {
         if (re.code === 1) {
           let resp = re.response
-          _this.$alert('本次练习得分：' + resp.score + '分，共' + resp.questionCount + '题，正确' + resp.questionCorrect + '题', '练习结果', {
-            confirmButtonText: '返回首页',
+          let msg = '本次得分：' + resp.score + '分，共' + resp.totalCount + '题，正确' + resp.correctCount + '题'
+          if (resp.isNewBest) {
+            msg += '\n🎉 恭喜！刷新今日最高分！'
+          } else {
+            msg += '\n今日最高分：' + resp.todayBestScore + '分'
+          }
+          msg += '\n今日已练习' + resp.todayAttempts + '次'
+          _this.$alert(msg, '练习结果', {
+            confirmButtonText: '返回',
             callback: action => {
-              _this.$router.push('/index')
+              _this.$router.push('/daily-practice/index')
             }
           })
         } else {

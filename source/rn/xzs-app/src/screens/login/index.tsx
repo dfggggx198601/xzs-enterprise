@@ -28,7 +28,7 @@ export default function LoginScreen() {
   const shakeAnim = useRef(new Animated.Value(0)).current;
 
   // DEV_AUTO_LOGIN: Remove after testing
-  const DEV_AUTO_LOGIN = false;
+  const DEV_AUTO_LOGIN = true;
 
   useEffect(() => {
     Animated.parallel([
@@ -40,7 +40,7 @@ export default function LoginScreen() {
       (async () => {
         setLoading(true);
         try {
-          await login('student', '123456');
+          await login('aa', '123456');
         } catch (e: any) {
           setError(e.message || '自动登录失败');
         } finally {
@@ -151,7 +151,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </Animated.View>
 
-        <Text style={styles.version}>v1.0.0</Text>
+        <Text style={styles.version}>v1.1.0</Text>
       </KeyboardAvoidingView>
     </LinearGradient>
   );

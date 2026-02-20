@@ -240,7 +240,9 @@
     WHERE status=1 AND deleted=0
     AND subject_id = #{subjectId}
     AND tag = #{tag}
-    AND question_type = #{questionType}
+    <if test="questionType != null">
+      AND question_type = #{questionType}
+    </if>
     ORDER BY RAND()
     LIMIT #{count}
   </select>
@@ -259,6 +261,14 @@
   <update id="deleteBank">
     UPDATE t_question SET tag = NULL WHERE tag = #{tag}
   </update>
+
+  <select id="countByTagGroupByType" resultType="com.mindskip.xzs.domain.other.KeyValue">
+    SELECT question_type as name, COUNT(*) as value
+    FROM t_question
+    WHERE deleted=0 AND status=1 AND tag = #{tag}
+    GROUP BY question_type
+    ORDER BY question_type
+  </select>
 
   <select id="selectCountByDate"  resultType="com.mindskip.xzs.domain.other.KeyValue">
 		SELECT create_time as name,COUNT(create_time) as value from

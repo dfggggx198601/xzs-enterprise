@@ -4,17 +4,19 @@
       <h3 class="index-title-h3" style="border-left: solid 10px #e6a23c;">今日练习</h3>
       <div style="padding-left: 15px" v-loading="dailyLoading">
         <div v-if="dailyList.length === 0 && !dailyLoading" style="color: #909399; padding: 10px 0;">今日暂无练习</div>
-        <el-col :span="4" v-for="(item, index) in dailyList" :key="'dp-'+index" :offset="index > 0 ? 1 : 0">
+          <el-col :span="4" v-for="(item, index) in dailyList" :key="'dp-'+index" :offset="index > 0 ? 1 : 0">
           <el-card :body-style="{ padding: '0px' }">
             <img src="@/assets/exam-paper/show1.png" class="image">
             <div style="padding: 14px;">
               <span>{{item.title}}</span>
               <div style="font-size: 12px; color: #909399; margin-top: 5px;">{{item.questionCount}}题</div>
+              <div v-if="item.todayAttempts > 0" style="font-size: 12px; color: #67C23A; margin-top: 3px;">
+                今日最高：{{item.todayBestScore}}分 | 已练{{item.todayAttempts}}次
+              </div>
               <div class="bottom clearfix">
-                <router-link :to="{path:'/daily-practice/do',query:{id:item.id}}" v-if="!item.completed">
-                  <el-button type="text" class="button">开始练习</el-button>
+                <router-link :to="{path:'/daily-practice/do',query:{id:item.id}}">
+                  <el-button type="text" class="button">{{ item.todayAttempts > 0 ? '再练一次' : '开始练习' }}</el-button>
                 </router-link>
-                <el-tag type="success" size="mini" v-else>已完成</el-tag>
               </div>
             </div>
           </el-card>

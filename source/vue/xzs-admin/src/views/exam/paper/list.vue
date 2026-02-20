@@ -37,7 +37,7 @@
     <pagination v-show="total>0" :total="total" :page.sync="queryParam.pageIndex" :limit.sync="queryParam.pageSize"
                 @pagination="search"/>
   </div>
-    <el-dialog title="随机组卷" :visible.sync="randomPaperDialog" width="500px">
+    <el-dialog title="随机组卷" :visible.sync="randomPaperDialog" width="600px">
       <el-form :model="randomForm" label-width="100px">
         <el-form-item label="试卷名称">
           <el-input v-model="randomForm.name"></el-input>
@@ -48,16 +48,50 @@
           </el-select>
         </el-form-item>
         <el-form-item label="题库标签">
-          <el-input v-model="randomForm.tag" placeholder="输入题库标签"></el-input>
+          <el-input v-model="randomForm.tag" placeholder="输入题库标签" @blur="fetchTypeCount"></el-input>
         </el-form-item>
-        <el-form-item label="单选题数量">
-          <el-input-number v-model="randomForm.singleCount" :min="0"></el-input-number>
+        <el-divider content-position="left">题型配置</el-divider>
+        <el-form-item label="单选题">
+          <el-col :span="8">
+            <el-input-number v-model="randomForm.singleCount" :min="0" :max="typeCountMap[1] || 999" size="small"></el-input-number>
+          </el-col>
+          <el-col :span="6">
+            <span style="margin-left:8px;color:#909399;font-size:12px;">共 {{typeCountMap[1] || '?'}} 题</span>
+          </el-col>
+          <el-col :span="10">
+            <span style="margin-right:4px;font-size:12px;">每题</span>
+            <el-input-number v-model="randomForm.singleScore" :min="1" :max="100" size="small" style="width:100px;"></el-input-number>
+            <span style="margin-left:4px;font-size:12px;">分</span>
+          </el-col>
         </el-form-item>
-        <el-form-item label="多选题数量">
-          <el-input-number v-model="randomForm.multiCount" :min="0"></el-input-number>
+        <el-form-item label="多选题">
+          <el-col :span="8">
+            <el-input-number v-model="randomForm.multiCount" :min="0" :max="typeCountMap[2] || 999" size="small"></el-input-number>
+          </el-col>
+          <el-col :span="6">
+            <span style="margin-left:8px;color:#909399;font-size:12px;">共 {{typeCountMap[2] || '?'}} 题</span>
+          </el-col>
+          <el-col :span="10">
+            <span style="margin-right:4px;font-size:12px;">每题</span>
+            <el-input-number v-model="randomForm.multiScore" :min="1" :max="100" size="small" style="width:100px;"></el-input-number>
+            <span style="margin-left:4px;font-size:12px;">分</span>
+          </el-col>
         </el-form-item>
-        <el-form-item label="判断题数量">
-          <el-input-number v-model="randomForm.judgeCount" :min="0"></el-input-number>
+        <el-form-item label="判断题">
+          <el-col :span="8">
+            <el-input-number v-model="randomForm.judgeCount" :min="0" :max="typeCountMap[3] || 999" size="small"></el-input-number>
+          </el-col>
+          <el-col :span="6">
+            <span style="margin-left:8px;color:#909399;font-size:12px;">共 {{typeCountMap[3] || '?'}} 题</span>
+          </el-col>
+          <el-col :span="10">
+            <span style="margin-right:4px;font-size:12px;">每题</span>
+            <el-input-number v-model="randomForm.judgeScore" :min="1" :max="100" size="small" style="width:100px;"></el-input-number>
+            <span style="margin-left:4px;font-size:12px;">分</span>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="试卷总分">
+          <span style="font-size:16px;font-weight:bold;color:#409EFF;">{{ randomTotalScore }} 分</span>
         </el-form-item>
         <el-form-item label="建议时长">
           <el-input-number v-model="randomForm.suggestTime" :min="10"></el-input-number> 分钟
@@ -75,6 +109,7 @@
 import { mapGetters, mapState, mapActions } from 'vuex'
 import Pagination from '@/components/Pagination'
 import examPaperApi from '@/api/examPaper'
+import questionApi from '@/api/question'
 import { post } from '@/utils/request'
 
 export default {
@@ -93,6 +128,7 @@ export default {
       tableData: [],
       total: 0,
       randomPaperDialog: false,
+      typeCountMap: {},
       randomForm: {
         name: '随机试卷',
         subjectId: null,
@@ -100,6 +136,9 @@ export default {
         singleCount: 0,
         multiCount: 0,
         judgeCount: 0,
+        singleScore: 5,
+        multiScore: 10,
+        judgeScore: 5,
         suggestTime: 60
       }
     }
@@ -151,7 +190,22 @@ export default {
             this.$message.error('请输入题库标签');
             return;
         }
-        post('/api/admin/exam/paper/randomCreate', this.randomForm).then(re => {
+        if (this.randomTotalScore <= 0) {
+            this.$message.error('请至少选择一种题型并设置数量');
+            return;
+        }
+        post('/api/admin/exam/paper/randomCreate', {
+            subjectId: this.randomForm.subjectId,
+            tag: this.randomForm.tag,
+            name: this.randomForm.name,
+            suggestTime: this.randomForm.suggestTime,
+            singleCount: this.randomForm.singleCount,
+            multiCount: this.randomForm.multiCount,
+            judgeCount: this.randomForm.judgeCount,
+            singleScore: String(this.randomForm.singleScore),
+            multiScore: String(this.randomForm.multiScore),
+            judgeScore: String(this.randomForm.judgeScore)
+        }).then(re => {
             if (re.code === 1) {
                 this.$message.success('试卷生成成功');
                 this.randomPaperDialog = false;
@@ -161,9 +215,29 @@ export default {
             }
         });
     },
+    fetchTypeCount() {
+        if (!this.randomForm.tag) {
+            this.typeCountMap = {}
+            return
+        }
+        questionApi.bankTypeCount(this.randomForm.tag).then(response => {
+            if (response.code === 1 && response.response) {
+                let map = {}
+                response.response.forEach(item => {
+                    map[item.name] = parseInt(item.value)
+                })
+                this.typeCountMap = map
+            }
+        })
+    },
     ...mapActions('exam', { initSubject: 'initSubject' })
   },
   computed: {
+    randomTotalScore() {
+      return (this.randomForm.singleCount || 0) * (this.randomForm.singleScore || 0) +
+             (this.randomForm.multiCount || 0) * (this.randomForm.multiScore || 0) +
+             (this.randomForm.judgeCount || 0) * (this.randomForm.judgeScore || 0)
+    },
     ...mapGetters('enumItem', ['enumFormat']),
     ...mapState('enumItem', {
       levelEnum: state => state.user.levelEnum

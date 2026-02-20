@@ -68,11 +68,9 @@ public class ExamPaperController extends BaseApiController {
         paperVM.setTitleItems(new ArrayList<>());
         paperVM.setScore("100");
 
-        addRandomQuestions(paperVM, model.getSubjectId(), model.getTag(), 1, model.getSingleCount(), "单选题");
-        addRandomQuestions(paperVM, model.getSubjectId(), model.getTag(), 2, model.getMultiCount(), "多选题");
-        addRandomQuestions(paperVM, model.getSubjectId(), model.getTag(), 3, model.getJudgeCount(), "判断题");
-        addRandomQuestions(paperVM, model.getSubjectId(), model.getTag(), 4, model.getJudgeCount(), "填空题");
-        addRandomQuestions(paperVM, model.getSubjectId(), model.getTag(), 5, model.getJudgeCount(), "简答题");
+        addRandomQuestions(paperVM, model.getSubjectId(), model.getTag(), 1, model.getSingleCount(), "单选题", model.getSingleScore());
+        addRandomQuestions(paperVM, model.getSubjectId(), model.getTag(), 2, model.getMultiCount(), "多选题", model.getMultiScore());
+        addRandomQuestions(paperVM, model.getSubjectId(), model.getTag(), 3, model.getJudgeCount(), "判断题", model.getJudgeScore());
 
         int totalScore = paperVM.getTitleItems().stream().flatMap(t -> t.getQuestionItems().stream())
                 .mapToInt(q -> com.mindskip.xzs.utility.ExamUtil.scoreFromVM(q.getScore())).sum();
@@ -158,7 +156,7 @@ public class ExamPaperController extends BaseApiController {
     }
 
     private void addRandomQuestions(ExamPaperEditRequestVM paperVM, Integer subjectId, String tag, Integer type,
-            Integer count, String titleName) {
+            Integer count, String titleName, String scoreOverride) {
         if (count == null || count <= 0)
             return;
         List<Question> questions = questionService.selectRandomByTag(subjectId, tag, type, count);
@@ -171,6 +169,9 @@ public class ExamPaperController extends BaseApiController {
 
         for (Question q : questions) {
             QuestionEditRequestVM qVM = questionService.getQuestionEditRequestVM(q.getId());
+            if (scoreOverride != null && !scoreOverride.isEmpty()) {
+                qVM.setScore(scoreOverride);
+            }
             titleItem.getQuestionItems().add(qVM);
         }
         paperVM.getTitleItems().add(titleItem);

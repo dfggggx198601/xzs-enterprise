@@ -112,6 +112,11 @@ public class QuestionController extends BaseApiController {
         return RestResponse.ok(questionService.selectBankList());
     }
 
+    @RequestMapping(value = "/bank/typeCount", method = RequestMethod.POST)
+    public RestResponse<java.util.List<KeyValue>> bankTypeCount(@RequestParam String tag) {
+        return RestResponse.ok(questionService.countByTagGroupByType(tag));
+    }
+
     @RequestMapping(value = "/bank/update", method = RequestMethod.POST)
     public RestResponse updateBank(@RequestParam String oldTag, @RequestParam String newTag) {
         questionService.updateBank(oldTag, newTag);

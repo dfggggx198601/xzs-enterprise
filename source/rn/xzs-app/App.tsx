@@ -22,6 +22,7 @@ import ExamResultScreen from './src/screens/exam-result';
 import MessagesScreen from './src/screens/messages';
 import DailyPracticeScreen from './src/screens/daily-practice';
 import DailyPracticeTakingScreen from './src/screens/daily-practice/taking';
+import UpdateChecker from './src/components/UpdateChecker';
 
 type RootStackParamList = {
   Auth: undefined;
@@ -154,6 +155,7 @@ export default function App() {
         <AuthProvider>
           <NavigationContainer>
             <RootNavigator />
+            <UpdateChecker />
             <StatusBar style="auto" />
           </NavigationContainer>
         </AuthProvider>

@@ -11,6 +11,9 @@ public class RandomPaperVM {
     private Integer singleCount;
     private Integer multiCount;
     private Integer judgeCount;
+    private String singleScore;
+    private String multiScore;
+    private String judgeScore;
     @NotNull
     private String name;
     @NotNull
@@ -54,6 +57,30 @@ public class RandomPaperVM {
 
     public void setJudgeCount(Integer judgeCount) {
         this.judgeCount = judgeCount;
+    }
+
+    public String getSingleScore() {
+        return singleScore;
+    }
+
+    public void setSingleScore(String singleScore) {
+        this.singleScore = singleScore;
+    }
+
+    public String getMultiScore() {
+        return multiScore;
+    }
+
+    public void setMultiScore(String multiScore) {
+        this.multiScore = multiScore;
+    }
+
+    public String getJudgeScore() {
+        return judgeScore;
+    }
+
+    public void setJudgeScore(String judgeScore) {
+        this.judgeScore = judgeScore;
     }
 
     public String getName() {

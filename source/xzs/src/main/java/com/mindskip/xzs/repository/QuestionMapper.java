@@ -28,4 +28,6 @@ public interface QuestionMapper extends BaseMapper<Question> {
     void updateBank(@Param("oldTag") String oldTag, @Param("newTag") String newTag);
 
     void deleteBank(@Param("tag") String tag);
+
+    List<KeyValue> countByTagGroupByType(@Param("tag") String tag);
 }

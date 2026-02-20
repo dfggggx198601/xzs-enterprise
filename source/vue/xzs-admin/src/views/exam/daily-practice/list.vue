@@ -39,15 +39,22 @@
     <pagination v-show="total>0" :total="total" :page.sync="queryParam.pageIndex" :limit.sync="queryParam.pageSize"
                 @pagination="search"/>
 
-    <el-dialog title="完成记录" :visible.sync="answerDialog" width="70%">
+    <el-dialog title="完成记录（每人每天最高分）" :visible.sync="answerDialog" width="70%">
+      <div style="margin-bottom: 10px; text-align: right;">
+        <el-button type="success" size="small" icon="el-icon-download" @click="exportAnswers">下载Excel</el-button>
+        <el-button type="danger" size="small" icon="el-icon-document" @click="exportAnswersPdf">下载PDF</el-button>
+      </div>
       <el-table v-loading="answerLoading" :data="answerTableData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="id" label="Id" width="80px"/>
         <el-table-column prop="userName" label="员工" width="120px"/>
         <el-table-column prop="dailyPracticeTitle" label="练习名称"/>
-        <el-table-column prop="score" label="得分" width="80px"/>
+        <el-table-column prop="score" label="最高分" width="80px">
+          <template slot-scope="{row}">
+            <span style="color: #67C23A; font-weight: bold;">{{row.score}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="questionCount" label="题目数" width="80px"/>
         <el-table-column prop="questionCorrect" label="正确数" width="80px"/>
-        <el-table-column prop="practiceDate" label="练习日期" width="160px"/>
+        <el-table-column prop="practiceDate" label="练习日期" width="120px"/>
         <el-table-column prop="createTime" label="提交时间" width="160px"/>
       </el-table>
       <pagination v-show="answerTotal>0" :total="answerTotal" :page.sync="answerQueryParam.pageIndex"
@@ -132,6 +139,12 @@ export default {
         this.answerQueryParam.pageIndex = re.pageNum
         this.answerLoading = false
       })
+    },
+    exportAnswers () {
+      window.open(dailyPracticeApi.answerExportUrl(this.answerQueryParam.dailyPracticeId), '_blank')
+    },
+    exportAnswersPdf () {
+      window.open('/api/admin/dailyPractice/answer/exportPdf?dailyPracticeId=' + this.answerQueryParam.dailyPracticeId, '_blank')
     },
     levelFormatter (row, column, cellValue) {
       return this.enumFormat(this.levelEnum, cellValue)

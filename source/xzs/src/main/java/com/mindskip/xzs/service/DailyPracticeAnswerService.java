@@ -16,4 +16,12 @@ public interface DailyPracticeAnswerService extends BaseService<DailyPracticeAns
     List<DailyPracticeAnswer> getByUserId(Integer userId);
 
     List<DailyPracticeAnswer> getByDailyPracticeId(Integer dailyPracticeId);
+
+    DailyPracticeAnswer getBestByPracticeAndUserAndDate(Integer dailyPracticeId, Integer userId, Date practiceDate);
+
+    int countByPracticeAndUserAndDate(Integer dailyPracticeId, Integer userId, Date practiceDate);
+
+    PageInfo<DailyPracticeAnswer> pageByUserId(Integer userId, Integer pageIndex, Integer pageSize);
+
+    PageInfo<DailyPracticeAnswer> pageBest(DailyPracticeAnswerPageRequestVM requestVM);
 }

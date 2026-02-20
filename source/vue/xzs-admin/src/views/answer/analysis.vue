@@ -11,10 +11,11 @@
           {{ row.avgScore ? row.avgScore.toFixed(1) : '0.0' }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200px">
+      <el-table-column label="操作" align="center" width="280px">
         <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="handleDetail(row)">详情</el-button>
-          <el-button size="mini" type="success" @click="handleExport(row)">导出成绩</el-button>
+          <el-button size="mini" type="success" @click="handleExport(row)">导出Excel</el-button>
+          <el-button size="mini" type="danger" @click="handleExportPdf(row)">导出PDF</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -97,6 +98,9 @@ export default {
     },
     handleExport(row) {
       window.open(`/api/admin/examPaperAnswer/export/${row.examPaperId}`, '_blank')
+    },
+    handleExportPdf(row) {
+      window.open(`/api/admin/examPaperAnswer/exportPdf/${row.examPaperId}`, '_blank')
     }
   }
 }

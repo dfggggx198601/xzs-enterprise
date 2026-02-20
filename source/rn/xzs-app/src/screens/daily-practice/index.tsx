@@ -18,8 +18,9 @@ interface PracticeItem {
   id: number;
   title: string;
   questionCount: number;
-  completed: boolean;
-  score?: number;
+  todayAttempts: number;
+  todayBestScore?: number;
+  todayBestCorrect?: number;
 }
 
 interface HistoryItem {
@@ -112,23 +113,26 @@ export default function DailyPracticeScreen() {
               <TouchableOpacity
                 key={item.id}
                 style={styles.practiceCard}
-                onPress={() => !item.completed && navigation.navigate('DailyPracticeTaking', { id: item.id })}
-                activeOpacity={item.completed ? 1 : 0.7}
+                onPress={() => navigation.navigate('DailyPracticeTaking', { id: item.id })}
+                activeOpacity={0.7}
               >
-                <View style={[styles.cardIcon, { backgroundColor: item.completed ? colors.secondary + '15' : colors.primary + '15' }]}>
+                <View style={[styles.cardIcon, { backgroundColor: item.todayAttempts > 0 ? colors.secondary + '15' : colors.primary + '15' }]}>
                   <MaterialCommunityIcons
-                    name={item.completed ? 'check-circle-outline' : 'lightning-bolt'}
+                    name={item.todayAttempts > 0 ? 'check-circle-outline' : 'lightning-bolt'}
                     size={24}
-                    color={item.completed ? colors.secondary : colors.primary}
+                    color={item.todayAttempts > 0 ? colors.secondary : colors.primary}
                   />
                 </View>
                 <View style={styles.cardBody}>
                   <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
-                  <Text style={styles.cardSub}>{item.questionCount}题</Text>
+                  <Text style={styles.cardSub}>
+                    {item.questionCount}题
+                    {item.todayAttempts > 0 ? ` | 已练${item.todayAttempts}次` : ''}
+                  </Text>
                 </View>
-                {item.completed ? (
+                {item.todayAttempts > 0 ? (
                   <View style={styles.scoreBadge}>
-                    <Text style={styles.scoreText}>{item.score}分</Text>
+                    <Text style={styles.scoreText}>{item.todayBestScore}分</Text>
                   </View>
                 ) : (
                   <MaterialCommunityIcons name="chevron-right" size={20} color={colors.textLight} />

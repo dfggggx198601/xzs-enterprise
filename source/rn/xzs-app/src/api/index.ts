@@ -1,10 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { Platform } from 'react-native';
-
-// Android emulator uses 10.0.2.2 to reach host machine's localhost
-const BASE_URL = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://localhost:8000';
+const BASE_URL = 'http://150.230.123.72:8000';
 
 interface ApiResponse<T = any> {
   code: number;
@@ -129,4 +126,8 @@ export const dailyPracticeApi = {
   start: (id: number) => apiClient.post(`/api/student/dailyPractice/start/${id}`),
   submit: (data: any) => apiClient.post('/api/student/dailyPractice/submit', data),
   history: (query: any) => apiClient.post('/api/student/dailyPractice/history', query),
+};
+
+export const appVersionApi = {
+  check: () => apiClient.post('/api/student/app/version'),
 };

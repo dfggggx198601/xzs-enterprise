@@ -7,6 +7,7 @@ export default {
     select: id => post('/api/admin/question/select/' + id),
     deleteQuestion: id => post('/api/admin/question/delete/' + id),
     bankList: () => post('/api/admin/question/bank/list'),
+    bankTypeCount: tag => form('/api/admin/question/bank/typeCount', { tag }),
     updateBank: query => form('/api/admin/question/bank/update', query),
     deleteBank: query => form('/api/admin/question/bank/delete', query),
     importQuestions: (file, subjectId, tag) => {

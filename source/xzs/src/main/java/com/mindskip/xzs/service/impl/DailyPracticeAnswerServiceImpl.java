@@ -44,4 +44,28 @@ public class DailyPracticeAnswerServiceImpl extends BaseServiceImpl<DailyPractic
     public List<DailyPracticeAnswer> getByDailyPracticeId(Integer dailyPracticeId) {
         return dailyPracticeAnswerMapper.getByDailyPracticeId(dailyPracticeId);
     }
+
+    @Override
+    public DailyPracticeAnswer getBestByPracticeAndUserAndDate(Integer dailyPracticeId, Integer userId, Date practiceDate) {
+        return dailyPracticeAnswerMapper.getBestByPracticeAndUserAndDate(dailyPracticeId, userId, practiceDate);
+    }
+
+    @Override
+    public int countByPracticeAndUserAndDate(Integer dailyPracticeId, Integer userId, Date practiceDate) {
+        return dailyPracticeAnswerMapper.countByPracticeAndUserAndDate(dailyPracticeId, userId, practiceDate);
+    }
+
+    @Override
+    public PageInfo<DailyPracticeAnswer> pageByUserId(Integer userId, Integer pageIndex, Integer pageSize) {
+        return PageHelper.startPage(pageIndex, pageSize, "id desc").doSelectPageInfo(() ->
+                dailyPracticeAnswerMapper.pageByUserId(userId)
+        );
+    }
+
+    @Override
+    public PageInfo<DailyPracticeAnswer> pageBest(DailyPracticeAnswerPageRequestVM requestVM) {
+        return PageHelper.startPage(requestVM.getPageIndex(), requestVM.getPageSize(), "id desc").doSelectPageInfo(() ->
+                dailyPracticeAnswerMapper.pageBest(requestVM)
+        );
+    }
 }
