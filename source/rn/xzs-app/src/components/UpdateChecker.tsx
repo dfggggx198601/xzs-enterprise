@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Platform, View, Text, StyleSheet, Modal } from 'react-native';
-import * as FileSystem from 'expo-file-system';
-import * as IntentLauncher from 'expo-intent-launcher';
+import { Alert, Platform, View, Text, StyleSheet, Modal, Linking } from 'react-native';
 import { appVersionApi } from '../api';
 
 const APP_VERSION = '1.3.0';
@@ -55,6 +53,9 @@ export default function UpdateChecker() {
 
   const downloadAndInstall = async (url: string) => {
     try {
+      const FileSystem = require('expo-file-system');
+      const IntentLauncher = require('expo-intent-launcher');
+
       setDownloading(true);
       setProgress(0);
 
@@ -69,7 +70,7 @@ export default function UpdateChecker() {
         url,
         fileUri,
         {},
-        (downloadProgress) => {
+        (downloadProgress: any) => {
           const pct = downloadProgress.totalBytesExpectedToWrite > 0
             ? Math.round((downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite) * 100)
             : 0;
@@ -95,7 +96,8 @@ export default function UpdateChecker() {
       });
     } catch (e: any) {
       setDownloading(false);
-      Alert.alert('更新失败', '安装过程出错，请重试\n' + (e?.message || ''));
+      Linking.openURL(url).catch(() => {});
+      Alert.alert('更新提示', '正在通过浏览器下载，下载完成后请手动安装');
     }
   };
 
