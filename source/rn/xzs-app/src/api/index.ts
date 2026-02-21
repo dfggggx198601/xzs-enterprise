@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BASE_URL = 'http://150.230.123.72:8000';
+const BASE_URL = 'https://exam.440700.xyz';
 
 interface ApiResponse<T = any> {
   code: number;

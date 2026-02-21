@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Alert, Linking, Platform } from 'react-native';
 import { appVersionApi } from '../api';
 
-const APP_VERSION = '1.1.0';
+const APP_VERSION = '1.2.0';
 
 function compareVersions(current: string, latest: string): boolean {
   const c = current.split('.').map(Number);
@@ -29,7 +29,7 @@ export default function UpdateChecker() {
       const { version, forceUpdate, downloadUrl } = res.response;
       if (!compareVersions(APP_VERSION, version)) return;
 
-      const baseUrl = 'http://150.230.123.72:8000';
+      const baseUrl = 'https://exam.440700.xyz';
       const fullUrl = `${baseUrl}${downloadUrl}`;
 
       const buttons = forceUpdate
