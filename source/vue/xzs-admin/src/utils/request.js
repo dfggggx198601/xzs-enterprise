@@ -92,13 +92,21 @@ const get = function (url, params) {
 }
 
 const form = function (url, params) {
+  const formData = new FormData()
+  if (params) {
+    Object.keys(params).forEach(key => {
+      if (params[key] !== undefined && params[key] !== null) {
+        formData.append(key, params[key])
+      }
+    })
+  }
   const query = {
     baseURL: process.env.VUE_APP_URL,
     url: url,
     method: 'post',
     withCredentials: true,
     timeout: 30000,
-    data: params,
+    data: formData,
     headers: { 'Content-Type': 'multipart/form-data', 'request-ajax': true }
   }
   return request(false, query)
