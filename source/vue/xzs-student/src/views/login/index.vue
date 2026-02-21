@@ -33,6 +33,7 @@
     <div class="account-foot-copyright">
       <span>Copyright ©2019-2026 武汉思维跳跃科技有限公司 版权所有</span>
       <br><span class="version-text">v1.2.0</span>
+      <br><a class="app-download-link" href="/api/student/app/download">📱 下载 Android App</a>
     </div>
   </div>
 </template>
@@ -422,5 +423,19 @@ export default {
     font-size: 12px;
     margin-top: 4px;
     display: inline-block;
+  }
+
+  .account-foot-copyright .app-download-link {
+    color: var(--color-primary);
+    font-size: 13px;
+    margin-top: 8px;
+    display: inline-block;
+    text-decoration: none;
+    border-bottom: none;
+    opacity: 0.8;
+  }
+
+  .account-foot-copyright .app-download-link:hover {
+    opacity: 1;
   }
 </style>
