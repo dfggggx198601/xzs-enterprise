@@ -46,7 +46,7 @@ system:
     access-key: KabOBTPGVll2sSV8d1OIlW8G4_n_cReE7RSsLafA
     secret-key: mSltk9_9KtCdFetCmxvvCAgsBg8JZHiXMuQeqSJA
   app:
-    version: 1.2.0
+    version: 1.3.0
     apk-path: /opt/xzs/app-release.apk
     force-update: false
 

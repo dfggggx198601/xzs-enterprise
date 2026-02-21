@@ -4,7 +4,7 @@ import * as FileSystem from 'expo-file-system';
 import * as IntentLauncher from 'expo-intent-launcher';
 import { appVersionApi } from '../api';
 
-const APP_VERSION = '1.2.0';
+const APP_VERSION = '1.3.0';
 
 function compareVersions(current: string, latest: string): boolean {
   const c = current.split('.').map(Number);
