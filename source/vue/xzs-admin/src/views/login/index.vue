@@ -53,6 +53,7 @@
 
     <div class="account-foot-copyright">
       <span>Copyright ©2019-2026 武汉思维跳跃科技有限公司 版权所有</span>
+      <br><span class="version-text">v1.2.0</span>
     </div>
   </div>
 </template>
@@ -279,6 +280,15 @@ $light_gray:#eee;
   @media only screen and (max-width: 470px) {
     .thirdparty-button {
       display: none;
+    }
+  }
+
+  .account-foot-copyright {
+    .version-text {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 12px;
+      margin-top: 4px;
+      display: inline-block;
     }
   }
 }

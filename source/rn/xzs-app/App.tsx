@@ -65,7 +65,10 @@ function MainTabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerShown: false,
+        headerShown: true,
+        headerTitle: tabLabels[route.name],
+        headerStyle: { backgroundColor: colors.surface },
+        headerTitleStyle: { color: colors.text, fontWeight: '600' },
         tabBarIcon: ({ focused, color, size }) => {
           const icons = tabIcons[route.name];
           const iconName = focused ? icons.focused : icons.unfocused;
@@ -86,7 +89,7 @@ function MainTabs() {
         },
       })}
     >
-      <Tab.Screen name="Dashboard" component={DashboardScreen} />
+      <Tab.Screen name="Dashboard" component={DashboardScreen} options={{ headerShown: false }} />
       <Tab.Screen name="ExamList" component={ExamListScreen} />
       <Tab.Screen name="Records" component={RecordsScreen} />
       <Tab.Screen name="WrongQuestions" component={WrongQuestionsScreen} />

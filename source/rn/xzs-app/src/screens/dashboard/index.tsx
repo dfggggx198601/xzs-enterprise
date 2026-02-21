@@ -11,6 +11,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../../contexts/AuthContext';
 import { dashboardApi, userApi } from '../../api';
 import { colors, spacing, borderRadius, fontSize, shadows } from '../../theme';
@@ -31,6 +32,7 @@ const quickActions = [
 export default function DashboardScreen() {
   const { user } = useAuth();
   const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [dashData, setDashData] = useState<DashboardData | null>(null);
@@ -78,7 +80,7 @@ export default function DashboardScreen() {
       >
         <LinearGradient
           colors={[colors.gradientStart, colors.gradientEnd]}
-          style={styles.header}
+          style={[styles.header, { paddingTop: insets.top + 20 }]}
         >
           <View style={styles.headerRow}>
             <View>
@@ -150,7 +152,6 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xxl,
   },
   header: {
-    paddingTop: 60,
     paddingBottom: spacing.xl + 40,
     paddingHorizontal: spacing.lg,
     borderBottomLeftRadius: borderRadius.xl,

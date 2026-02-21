@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
 import { colors, spacing, borderRadius, fontSize, shadows } from '../../theme';
+import { APP_VERSION } from '../../components/UpdateChecker';
 
 export default function LoginScreen() {
   const { login } = useAuth();
@@ -151,7 +152,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </Animated.View>
 
-        <Text style={styles.version}>v1.1.0</Text>
+        <Text style={styles.version}>v{APP_VERSION}</Text>
       </KeyboardAvoidingView>
     </LinearGradient>
   );

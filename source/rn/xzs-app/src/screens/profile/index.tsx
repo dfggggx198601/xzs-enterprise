@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
 import { userApi } from '../../api';
 import { colors, spacing, borderRadius, fontSize, shadows } from '../../theme';
+import { APP_VERSION } from '../../components/UpdateChecker';
 
 export default function ProfileScreen() {
   const { user, logout, refreshUser } = useAuth();
@@ -45,7 +46,7 @@ export default function ProfileScreen() {
 
   const menuItems = [
     { icon: 'shield-check-outline' as const, label: '修改密码', onPress: () => Alert.alert('提示', '功能开发中') },
-    { icon: 'information-outline' as const, label: '关于我们', onPress: () => Alert.alert('企业考试', 'v1.0.0\n员工在线考试平台') },
+    { icon: 'information-outline' as const, label: '关于我们', onPress: () => Alert.alert('企业考试', `v${APP_VERSION}\n员工在线考试平台`) },
   ];
 
   return (
