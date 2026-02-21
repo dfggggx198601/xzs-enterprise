@@ -1,11 +1,11 @@
 {
   "name": "xzs-student",
   "version": "3.9.0",
-  "author": "武汉思维跳跃科技有限公司",
-  "description": "培训考试系统-员工端",
+  "author": "",
+  "description": "企业培训考试系统-员工端",
   "license": "AGPL-3.0",
   "private": true,
-  "homepage": "https://www.mindskip.net/xzs.html",
+  "homepage": "",
   "scripts": {
     "serve": "vue-cli-service serve --mode dev",
     "build": "vue-cli-service build --mode prod",
@@ -17,11 +17,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitee.com/mindskip/xzs-mysql.git"
+    "url": ""
   },
   "bugs": {
-    "url": "https://gitee.com/mindskip/xzs-mysql/issues",
-    "email": "mindskip@qq.com"
+    "url": "",
+    "email": ""
   },
   "husky": {
     "hooks": {

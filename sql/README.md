@@ -1,3 +1,3 @@
-# 数据库下载地址
+# 数据库
 
-地址：[https://www.mindskip.net:999](https://www.mindskip.net:999)
+数据库脚本请参考项目文档。

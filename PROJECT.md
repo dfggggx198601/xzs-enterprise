@@ -8,8 +8,6 @@
 |------|------|
 | 名称 | xzs-mysql（企业培训考试系统） |
 | 版本 | 3.9.0 |
-| 许可证 | GNU AGPL v3.0 |
-| 原作者 | 武汉思维跳跃科技有限公司 (mindskip) |
 | 仓库 | https://github.com/dfggggx198601/xzs-enterprise.git (main 分支) |
 | 线上地址 | https://exam.440700.xyz |
 | 服务器 IP | 150.230.123.72 |

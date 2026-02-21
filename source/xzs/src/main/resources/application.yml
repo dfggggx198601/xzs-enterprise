@@ -41,10 +41,10 @@ system:
       - /api/wx/student/auth/checkBind
       - /api/wx/student/user/register
   qn:
-    url: http://xzs.file.mindskip.net
-    bucket: mindskip
-    access-key: KabOBTPGVll2sSV8d1OIlW8G4_n_cReE7RSsLafA
-    secret-key: mSltk9_9KtCdFetCmxvvCAgsBg8JZHiXMuQeqSJA
+    url:
+    bucket:
+    access-key:
+    secret-key:
   app:
     version: 1.3.0
     apk-path: /opt/xzs/app-release.apk

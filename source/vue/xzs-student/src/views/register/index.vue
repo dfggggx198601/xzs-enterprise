@@ -37,7 +37,7 @@
       </div>
     </div>
     <div class="account-foot-copyright">
-      <span>Copyright ©2019-2026 武汉思维跳跃科技有限公司 版权所有</span>
+      <span>企业培训考试系统</span>
     </div>
   </div>
 </template>
