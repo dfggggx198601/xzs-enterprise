@@ -44,7 +44,15 @@ class ApiClient {
         }
         return response;
       },
-      (error) => Promise.reject(error)
+      (error) => {
+        if (error.code === 'ECONNABORTED') {
+          return Promise.reject(new Error('请求超时，请重试'));
+        }
+        if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+          return Promise.reject(new Error('网络连接失败，请检查网络'));
+        }
+        return Promise.reject(error);
+      }
     );
   }
 
@@ -105,11 +113,13 @@ export const examPaperAnswerApi = {
 export const questionAnswerApi = {
   pageList: (query: any) => apiClient.post('/api/student/question/answer/page', query),
   select: (id: number) => apiClient.post(`/api/student/question/answer/select/${id}`),
+  delete: (id: number) => apiClient.post(`/api/student/question/answer/delete/${id}`),
 };
 
 export const userApi = {
   getCurrentUser: () => apiClient.post('/api/student/user/current'),
   update: (query: any) => apiClient.post('/api/student/user/update', query),
+  updatePwd: (query: any) => apiClient.post('/api/student/user/updatePwd', query),
   getUserEvent: () => apiClient.post('/api/student/user/log'),
   messagePageList: (query: any) => apiClient.post('/api/student/user/message/page', query),
   readMessage: (id: number) => apiClient.post(`/api/student/user/message/read/${id}`),

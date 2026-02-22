@@ -40,12 +40,14 @@ public class DashboardController extends BaseApiController {
 
         PaperFilter fixedPaperFilter = new PaperFilter();
         fixedPaperFilter.setGradeLevel(user.getUserLevel());
+        fixedPaperFilter.setUserId(user.getId());
         fixedPaperFilter.setExamPaperType(ExamPaperTypeEnum.Fixed.getCode());
         indexVM.setFixedPaper(examPaperService.indexPaper(fixedPaperFilter));
 
         PaperFilter timeLimitPaperFilter = new PaperFilter();
         timeLimitPaperFilter.setDateTime(new Date());
         timeLimitPaperFilter.setGradeLevel(user.getUserLevel());
+        timeLimitPaperFilter.setUserId(user.getId());
         timeLimitPaperFilter.setExamPaperType(ExamPaperTypeEnum.TimeLimit.getCode());
 
         List<PaperInfo> limitPaper = examPaperService.indexPaper(timeLimitPaperFilter);

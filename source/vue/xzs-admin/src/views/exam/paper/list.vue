@@ -220,7 +220,7 @@ export default {
             this.typeCountMap = {}
             return
         }
-        questionApi.bankTypeCount(this.randomForm.tag).then(response => {
+        questionApi.bankTypeCount(this.randomForm.tag, this.randomForm.subjectId).then(response => {
             if (response.code === 1 && response.response) {
                 let map = {}
                 response.response.forEach(item => {

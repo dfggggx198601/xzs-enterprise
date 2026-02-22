@@ -9,7 +9,7 @@ import {
   TextInput,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { examPaperApi, subjectApi } from '../../api';
 import { colors, spacing, borderRadius, fontSize, shadows } from '../../theme';
 
@@ -57,6 +57,12 @@ export default function ExamListScreen() {
   useEffect(() => {
     loadSubjects();
   }, [loadSubjects]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadPapers(1, true);
+    }, [selectedSubject])
+  );
 
   useEffect(() => {
     loadPapers(1, true);

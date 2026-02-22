@@ -113,8 +113,8 @@ public class QuestionController extends BaseApiController {
     }
 
     @RequestMapping(value = "/bank/typeCount", method = RequestMethod.POST)
-    public RestResponse<java.util.List<KeyValue>> bankTypeCount(@RequestParam String tag) {
-        return RestResponse.ok(questionService.countByTagGroupByType(tag));
+    public RestResponse<java.util.List<KeyValue>> bankTypeCount(@RequestParam String tag, @RequestParam(required = false) Integer subjectId) {
+        return RestResponse.ok(questionService.countByTagGroupByType(tag, subjectId));
     }
 
     @RequestMapping(value = "/bank/update", method = RequestMethod.POST)
@@ -140,10 +140,9 @@ public class QuestionController extends BaseApiController {
             return RestResponse.fail(2, "业务范围和题库标签不能为空");
         }
         try {
-            List<QuestionImportVM> importList = EasyExcel.read(file.getInputStream())
-                    .head(QuestionImportVM.class)
-                    .sheet()
-                    .doReadSync();
+            FlexibleQuestionImportListener listener = new FlexibleQuestionImportListener();
+            EasyExcel.read(file.getInputStream(), listener).sheet().doRead();
+            List<QuestionImportVM> importList = listener.getDataList();
             if (importList == null || importList.isEmpty()) {
                 return RestResponse.fail(2, "文件中没有数据");
             }

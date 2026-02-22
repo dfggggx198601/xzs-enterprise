@@ -27,6 +27,11 @@
       </el-table-column>
       <el-table-column prop="doTime" label="耗时" width="100px"/>
       <el-table-column prop="createTime" label="提交时间" width="160px"/>
+      <el-table-column label="操作" width="100px">
+        <template slot-scope="{row}">
+          <el-button size="mini" type="danger" @click="handleDelete(row)">删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="queryParam.pageIndex" :limit.sync="queryParam.pageSize"
                 @pagination="search"/>
@@ -71,6 +76,18 @@ export default {
     submitForm () {
       this.queryParam.pageIndex = 1
       this.search()
+    },
+    handleDelete (row) {
+      this.$confirm('确定要删除这条记录吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        examPaperAnswerApi.delete(row.id).then(() => {
+          this.$message.success('删除成功')
+          this.search()
+        })
+      })
     },
     ...mapActions('exam', { initSubject: 'initSubject' })
   },

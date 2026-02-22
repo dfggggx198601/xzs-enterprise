@@ -253,6 +253,11 @@
         and grade_level=#{levelId}
       </if>
        and paper_type=#{paperType}
+       <if test="userId != null">
+         and id not in (
+           select exam_paper_id from t_exam_paper_answer where create_user = #{userId}
+         )
+       </if>
     </where>
   </select>
 
@@ -264,7 +269,8 @@
       and deleted=0
       and paper_type= #{examPaperType}
       and grade_level=#{gradeLevel}
-      <if test="examPaperType == 3 ">
+      <if test="userId != null">
+        and id not in (select exam_paper_id from t_exam_paper_answer where create_user = #{userId})
       </if>
       <if test="examPaperType == 4 ">
         and  #{dateTime} between limit_start_time  and limit_end_time

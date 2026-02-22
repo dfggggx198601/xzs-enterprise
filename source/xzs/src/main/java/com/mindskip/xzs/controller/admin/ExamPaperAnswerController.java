@@ -58,13 +58,23 @@ public class ExamPaperAnswerController extends BaseApiController {
             vm.setSystemScore(ExamUtil.scoreToVM(e.getSystemScore()));
             vm.setUserScore(ExamUtil.scoreToVM(e.getUserScore()));
             vm.setPaperScore(ExamUtil.scoreToVM(e.getPaperScore()));
-            vm.setSubjectName(subject.getName());
+            vm.setSubjectName(subject != null ? subject.getName() : "");
             vm.setCreateTime(DateTimeUtil.dateFormat(e.getCreateTime()));
-            User user = userService.selectById(e.getCreateUser());
-            vm.setUserName(user.getUserName());
+            User user = e.getCreateUser() != null ? userService.selectById(e.getCreateUser()) : null;
+            vm.setUserName(user != null ? user.getUserName() : "");
             return vm;
         });
         return RestResponse.ok(page);
+    }
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
+    public RestResponse delete(@PathVariable Integer id) {
+        ExamPaperAnswer examPaperAnswer = examPaperAnswerService.selectById(id);
+        if (examPaperAnswer == null) {
+            return RestResponse.fail(2, "记录不存在");
+        }
+        examPaperAnswerService.deleteById(id);
+        return RestResponse.ok();
     }
 
     @RequestMapping(value = "/analysis", method = RequestMethod.POST)

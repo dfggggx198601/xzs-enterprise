@@ -451,3 +451,62 @@ cd /Users/apple/xzs-mysql && git add -A && git commit -m "message" && git push o
 12. **MyBatis Mapper**：XML 文件在 `resources/mapper/`，共 14 个，与 `repository/` 下的接口一一对应
 
 13. **安全配置**：`SecurityConfigurer.java` 中定义了 URL 权限规则，`application.yml` 的 `system.security-ignore-urls` 定义免认证路径
+
+---
+
+## 10. 修改记录 (2025-2026)
+
+### 2026-02 重大更新
+
+| 日期 | 修改内容 |
+|------|----------|
+| 2026-02 | 修复：已完成试卷过滤 - 可用试卷列表不再显示已做过的试卷 |
+| 2026-02 | 修复：提交重复试卷时显示错误提示 |
+| 2026-02 | 修复：题型统计接口缺少 subjectId 参数 |
+| 2026-02 | 修复：答卷列表 NullPointerException（用户被删除后） |
+| 2026-02 | 新增：答卷列表删除功能 |
+| 2026-02 | 新增：首页/试卷列表/记录/错题自动刷新（useFocusEffect） |
+| 2026-02 | 新增：错题详情页面（点击进入） |
+| 2026-02 | 新增：错题列表显示题干、选项、你的答案、正确答案 |
+| 2026-02 | 新增：错题答案显示选项内容（非仅字母） |
+| 2026-02 | 修复：退出登录后自动重新登录 bug |
+| 2026-02 | 新增：登录页显示版本号 |
+| 2026-02 | 修复：版本检查 API 支持 GET 请求 |
+
+### 版本号变更
+
+| 版本 | 日期 | 说明 |
+|------|------|------|
+| 1.10.0 | 2026-02 | 最新版本 |
+| 1.3.0 | 2026-02 | 初始版本 |
+
+### 构建命令
+
+```bash
+# 后端构建
+cd source/xzs && mvn clean package -DskipTests
+
+# 管理端构建
+cd source/vue/xzs-admin && npm run build
+
+# 学生端构建  
+cd source/vue/xzs-student && npm run build
+
+# React Native APK 构建（需 JDK 17）
+cd source/rn/xzs-app/android
+./gradlew :app:assembleRelease -x lint
+```
+
+### 服务器部署
+
+```bash
+# 上传 JAR
+scp source/xzs/target/xzs-3.9.0.jar root@150.230.123.72:/root/xzs-mysql/source/xzs/target/
+
+# 重启服务
+ssh root@150.230.123.72 'bash /root/start.sh'
+
+# 上传 APK
+scp source/rn/xzs-app/android/app/build/outputs/apk/release/app-release.apk \
+    root@150.230.123.72:/opt/xzs/app-release.apk
+```

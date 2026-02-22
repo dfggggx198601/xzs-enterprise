@@ -9,6 +9,7 @@ public class ExamPaperPageVM extends BasePage {
     private Integer paperType;
     private Integer subjectId;
     private Integer levelId;
+    private Integer userId;
 
     public Integer getPaperType() {
         return paperType;
@@ -32,5 +33,13 @@ public class ExamPaperPageVM extends BasePage {
 
     public void setLevelId(Integer levelId) {
         this.levelId = levelId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }

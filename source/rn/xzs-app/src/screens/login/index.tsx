@@ -9,11 +9,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
-import { colors, spacing, borderRadius, fontSize, shadows } from '../../theme';
+import { spacing, borderRadius, fontSize, shadows } from '../../theme';
 import { APP_VERSION } from '../../components/UpdateChecker';
 
 export default function LoginScreen() {
@@ -29,7 +30,7 @@ export default function LoginScreen() {
   const shakeAnim = useRef(new Animated.Value(0)).current;
 
   // DEV_AUTO_LOGIN: Remove after testing
-  const DEV_AUTO_LOGIN = true;
+  const DEV_AUTO_LOGIN = false;
 
   useEffect(() => {
     Animated.parallel([
@@ -79,7 +80,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <LinearGradient colors={[colors.gradientStart, colors.gradientEnd]} style={styles.gradient}>
+    <LinearGradient colors={['#f8fafc', '#e0e7ff']} style={styles.gradient}>
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -94,20 +95,22 @@ export default function LoginScreen() {
           ]}
         >
           <View style={styles.logoArea}>
-            <View style={styles.iconCircle}>
-              <MaterialCommunityIcons name="clipboard-text-outline" size={40} color={colors.primary} />
-            </View>
-            <Text style={styles.appName}>企业考试</Text>
-            <Text style={styles.appSubtitle}>员工在线考试平台</Text>
+            <Image
+              source={require('../../../assets/icon.png')}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
+            <Text style={styles.appName}>XZS 企业考试系统</Text>
+            <Text style={styles.appSubtitle}>内部培训评估与知识管理平台</Text>
           </View>
 
           <View style={styles.inputGroup}>
             <View style={styles.inputWrapper}>
-              <MaterialCommunityIcons name="account-outline" size={20} color={colors.textLight} style={styles.inputIcon} />
+              <MaterialCommunityIcons name="account-outline" size={20} color="#94a3b8" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder="请输入用户名"
-                placeholderTextColor={colors.textLight}
+                placeholderTextColor="#94a3b8"
                 value={userName}
                 onChangeText={setUserName}
                 autoCapitalize="none"
@@ -115,11 +118,11 @@ export default function LoginScreen() {
               />
             </View>
             <View style={styles.inputWrapper}>
-              <MaterialCommunityIcons name="lock-outline" size={20} color={colors.textLight} style={styles.inputIcon} />
+              <MaterialCommunityIcons name="lock-outline" size={20} color="#94a3b8" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder="请输入密码"
-                placeholderTextColor={colors.textLight}
+                placeholderTextColor="#94a3b8"
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
@@ -128,7 +131,7 @@ export default function LoginScreen() {
                 <MaterialCommunityIcons
                   name={showPassword ? 'eye-outline' : 'eye-off-outline'}
                   size={20}
-                  color={colors.textLight}
+                  color="#94a3b8"
                 />
               </TouchableOpacity>
             </View>
@@ -138,7 +141,7 @@ export default function LoginScreen() {
 
           <TouchableOpacity onPress={handleLogin} disabled={loading} activeOpacity={0.8}>
             <LinearGradient
-              colors={[colors.gradientStart, colors.gradientEnd]}
+              colors={['#3b82f6', '#2563eb']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.loginBtn}
@@ -150,9 +153,9 @@ export default function LoginScreen() {
               )}
             </LinearGradient>
           </TouchableOpacity>
-        </Animated.View>
 
-        <Text style={styles.version}>v{APP_VERSION}</Text>
+          <Text style={styles.versionText}>Powered by Mindskip · v{APP_VERSION}</Text>
+        </Animated.View>
       </KeyboardAvoidingView>
     </LinearGradient>
   );
@@ -170,78 +173,91 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '100%',
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
+    backgroundColor: 'transparent',
     padding: spacing.xl,
-    ...shadows.lg,
   },
   logoArea: {
     alignItems: 'center',
-    marginBottom: spacing.xl,
+    marginBottom: 40,
   },
-  iconCircle: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: colors.surfaceVariant,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: spacing.md,
+  logoImage: {
+    width: 100,
+    height: 100,
+    marginBottom: 20,
+    // Add shadow to image
+    shadowColor: '#2563eb',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
   },
   appName: {
-    fontSize: fontSize.xxl,
+    fontSize: 26,
     fontWeight: '700',
-    color: colors.text,
+    color: '#0f172a',
+    marginBottom: 8,
   },
   appSubtitle: {
-    fontSize: fontSize.sm,
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
+    fontSize: 15,
+    color: '#64748b',
+    marginTop: 4,
   },
   inputGroup: {
-    gap: spacing.md,
-    marginBottom: spacing.lg,
+    gap: 16,
+    marginBottom: 24,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surfaceVariant,
-    borderRadius: borderRadius.md,
-    paddingHorizontal: spacing.md,
-    height: 52,
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    height: 56,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.05)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
   },
   inputIcon: {
-    marginRight: spacing.sm,
+    marginRight: 12,
   },
   input: {
     flex: 1,
-    fontSize: fontSize.md,
-    color: colors.text,
+    fontSize: 16,
+    color: '#0f172a',
     height: '100%',
   },
   eyeBtn: {
     padding: spacing.xs,
   },
   errorText: {
-    color: colors.error,
-    fontSize: fontSize.sm,
+    color: '#ef4444',
+    fontSize: 14,
     textAlign: 'center',
-    marginBottom: spacing.md,
+    marginBottom: 16,
   },
   loginBtn: {
-    height: 52,
-    borderRadius: borderRadius.full,
+    height: 56,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#2563eb',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 4,
   },
   loginBtnText: {
     color: '#FFFFFF',
-    fontSize: fontSize.lg,
+    fontSize: 18,
     fontWeight: '600',
   },
-  version: {
-    color: 'rgba(255,255,255,0.5)',
-    fontSize: fontSize.xs,
-    marginTop: spacing.xl,
+  versionText: {
+    color: '#94a3b8',
+    fontSize: 13,
+    marginTop: 40,
+    textAlign: 'center',
   },
 });

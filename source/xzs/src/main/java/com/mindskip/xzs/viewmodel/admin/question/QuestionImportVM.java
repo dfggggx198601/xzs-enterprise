@@ -25,6 +25,12 @@ public class QuestionImportVM {
     @ExcelProperty("选项d")
     private String optionD;
 
+    @ExcelProperty("选项e")
+    private String optionE;
+
+    @ExcelProperty("选项f")
+    private String optionF;
+
     @ExcelProperty("答案")
     private String answer;
 
@@ -91,6 +97,22 @@ public class QuestionImportVM {
 
     public void setOptionD(String optionD) {
         this.optionD = optionD;
+    }
+
+    public String getOptionE() {
+        return optionE;
+    }
+
+    public void setOptionE(String optionE) {
+        this.optionE = optionE;
+    }
+
+    public String getOptionF() {
+        return optionF;
+    }
+
+    public void setOptionF(String optionF) {
+        this.optionF = optionF;
     }
 
     public String getAnswer() {

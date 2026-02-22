@@ -22,6 +22,9 @@ import ExamResultScreen from './src/screens/exam-result';
 import MessagesScreen from './src/screens/messages';
 import DailyPracticeScreen from './src/screens/daily-practice';
 import DailyPracticeTakingScreen from './src/screens/daily-practice/taking';
+import QuestionDetailScreen from './src/screens/question-detail';
+import TodoScreen from './src/screens/todo';
+import ChangePasswordScreen from './src/screens/change-password';
 import UpdateChecker from './src/components/UpdateChecker';
 
 type RootStackParamList = {
@@ -32,6 +35,9 @@ type RootStackParamList = {
   Messages: undefined;
   DailyPractice: undefined;
   DailyPracticeTaking: { id: number };
+  QuestionDetail: { id: number };
+  Todo: undefined;
+  ChangePassword: undefined;
 };
 
 type TabParamList = {
@@ -138,6 +144,21 @@ function RootNavigator() {
             name="DailyPracticeTaking"
             component={DailyPracticeTakingScreen}
             options={{ gestureEnabled: false, animation: 'slide_from_right' }}
+          />
+          <Stack.Screen
+            name="QuestionDetail"
+            component={QuestionDetailScreen}
+            options={{ title: '题目详情', animation: 'slide_from_right' }}
+          />
+          <Stack.Screen
+            name="Todo"
+            component={TodoScreen}
+            options={{ title: '每日待办', animation: 'slide_from_bottom' }}
+          />
+          <Stack.Screen
+            name="ChangePassword"
+            component={ChangePasswordScreen}
+            options={{ title: '修改密码', animation: 'slide_from_right' }}
           />
         </>
       ) : (

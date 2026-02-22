@@ -8,7 +8,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { examPaperAnswerApi } from '../../api';
 import { colors, spacing, borderRadius, fontSize, shadows } from '../../theme';
 
@@ -35,6 +35,12 @@ export default function RecordsScreen() {
       setLoading(false);
     }
   }, [loading, records]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadRecords(1, true);
+    }, [])
+  );
 
   useEffect(() => {
     loadRecords(1, true);

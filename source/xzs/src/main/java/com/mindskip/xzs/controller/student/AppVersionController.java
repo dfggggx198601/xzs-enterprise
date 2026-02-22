@@ -27,7 +27,7 @@ public class AppVersionController extends BaseApiController {
     @Value("${system.app.force-update:false}")
     private boolean forceUpdate;
 
-    @RequestMapping(value = "/version", method = RequestMethod.POST)
+    @RequestMapping(value = "/version", method = {RequestMethod.POST, RequestMethod.GET})
     public RestResponse<Map<String, Object>> checkVersion() {
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("version", latestVersion);
@@ -36,7 +36,7 @@ public class AppVersionController extends BaseApiController {
         return RestResponse.ok(result);
     }
 
-    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    @RequestMapping(value = "/download", method = {RequestMethod.GET, RequestMethod.POST})
     public ResponseEntity<Resource> download() {
         File file = new File(apkPath);
         if (!file.exists()) {

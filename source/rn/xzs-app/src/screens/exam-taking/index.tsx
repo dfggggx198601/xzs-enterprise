@@ -123,8 +123,12 @@ export default function ExamTakingScreen() {
             id: res.response?.id,
             score: parseFloat(res.response?.score || '0'),
           });
+        } else {
+          Alert.alert('提交失败', res.message || '试卷不能重复做');
         }
-      } catch {} finally {
+      } catch (error: any) {
+        Alert.alert('提交失败', error?.message || '网络错误，请重试');
+      } finally {
         setSubmitting(false);
       }
     };

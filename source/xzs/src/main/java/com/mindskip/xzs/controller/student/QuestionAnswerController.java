@@ -3,6 +3,7 @@ package com.mindskip.xzs.controller.student;
 import com.mindskip.xzs.base.BaseApiController;
 import com.mindskip.xzs.base.RestResponse;
 import com.mindskip.xzs.domain.ExamPaperQuestionCustomerAnswer;
+import com.mindskip.xzs.domain.Question;
 import com.mindskip.xzs.domain.Subject;
 import com.mindskip.xzs.domain.TextContent;
 import com.mindskip.xzs.domain.question.QuestionObject;
@@ -33,7 +34,8 @@ public class QuestionAnswerController extends BaseApiController {
     private final SubjectService subjectService;
 
     @Autowired
-    public QuestionAnswerController(ExamPaperQuestionCustomerAnswerService examPaperQuestionCustomerAnswerService, QuestionService questionService, TextContentService textContentService, SubjectService subjectService) {
+    public QuestionAnswerController(ExamPaperQuestionCustomerAnswerService examPaperQuestionCustomerAnswerService,
+            QuestionService questionService, TextContentService textContentService, SubjectService subjectService) {
         this.examPaperQuestionCustomerAnswerService = examPaperQuestionCustomerAnswerService;
         this.questionService = questionService;
         this.textContentService = textContentService;
@@ -41,7 +43,8 @@ public class QuestionAnswerController extends BaseApiController {
     }
 
     @RequestMapping(value = "/page", method = RequestMethod.POST)
-    public RestResponse<PageInfo<QuestionPageStudentResponseVM>> pageList(@RequestBody QuestionPageStudentRequestVM model) {
+    public RestResponse<PageInfo<QuestionPageStudentResponseVM>> pageList(
+            @RequestBody QuestionPageStudentRequestVM model) {
         model.setCreateUser(getCurrentUser().getId());
         PageInfo<ExamPaperQuestionCustomerAnswer> pageInfo = examPaperQuestionCustomerAnswerService.studentPage(model);
         PageInfo<QuestionPageStudentResponseVM> page = PageInfoHelper.copyMap(pageInfo, q -> {
@@ -52,19 +55,42 @@ public class QuestionAnswerController extends BaseApiController {
             QuestionObject questionObject = JsonUtil.toJsonObject(textContent.getContent(), QuestionObject.class);
             String clearHtml = HtmlUtil.clear(questionObject.getTitleContent());
             vm.setShortTitle(clearHtml);
+            vm.setFullTitle(clearHtml);
+            vm.setCorrectAnswer(questionObject.getCorrect());
+            if (vm.getCorrectAnswer() == null || vm.getCorrectAnswer().isEmpty()) {
+                Question question = questionService.selectById(q.getQuestionId());
+                if (question != null) {
+                    vm.setCorrectAnswer(question.getCorrect());
+                }
+            }
+            vm.setYourAnswer(q.getAnswer());
+            vm.setQuestionItems(questionObject.getQuestionItemObjects());
+            vm.setAnalyze(questionObject.getAnalyze());
             vm.setSubjectName(subject.getName());
             return vm;
         });
         return RestResponse.ok(page);
     }
 
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
+    public RestResponse delete(@PathVariable Integer id) {
+        ExamPaperQuestionCustomerAnswer record = examPaperQuestionCustomerAnswerService.selectById(id);
+        if (record == null || !record.getCreateUser().equals(getCurrentUser().getId())) {
+            return RestResponse.fail(2, "无权删除");
+        }
+        examPaperQuestionCustomerAnswerService.deleteById(id);
+        return RestResponse.ok();
+    }
 
     @RequestMapping(value = "/select/{id}", method = RequestMethod.POST)
     public RestResponse<QuestionAnswerVM> select(@PathVariable Integer id) {
         QuestionAnswerVM vm = new QuestionAnswerVM();
-        ExamPaperQuestionCustomerAnswer examPaperQuestionCustomerAnswer = examPaperQuestionCustomerAnswerService.selectById(id);
-        ExamPaperSubmitItemVM questionAnswerVM = examPaperQuestionCustomerAnswerService.examPaperQuestionCustomerAnswerToVM(examPaperQuestionCustomerAnswer);
-        QuestionEditRequestVM questionVM = questionService.getQuestionEditRequestVM(examPaperQuestionCustomerAnswer.getQuestionId());
+        ExamPaperQuestionCustomerAnswer examPaperQuestionCustomerAnswer = examPaperQuestionCustomerAnswerService
+                .selectById(id);
+        ExamPaperSubmitItemVM questionAnswerVM = examPaperQuestionCustomerAnswerService
+                .examPaperQuestionCustomerAnswerToVM(examPaperQuestionCustomerAnswer);
+        QuestionEditRequestVM questionVM = questionService
+                .getQuestionEditRequestVM(examPaperQuestionCustomerAnswer.getQuestionId());
         vm.setQuestionVM(questionVM);
         vm.setQuestionAnswerVM(questionAnswerVM);
         return RestResponse.ok(vm);

@@ -59,6 +59,21 @@ public class ExamPaperController extends BaseApiController {
     @RequestMapping(value = "/randomCreate", method = RequestMethod.POST)
     public RestResponse<ExamPaperEditRequestVM> randomCreate(
             @RequestBody @Valid RandomPaperVM model) {
+        
+        // 验证标签不能为空
+        if (model.getTag() == null || model.getTag().trim().isEmpty()) {
+            return RestResponse.fail(2, "题库标签不能为空");
+        }
+        
+        // 验证至少有一种题型数量大于 0
+        int singleCount = model.getSingleCount() != null ? model.getSingleCount() : 0;
+        int multiCount = model.getMultiCount() != null ? model.getMultiCount() : 0;
+        int judgeCount = model.getJudgeCount() != null ? model.getJudgeCount() : 0;
+        
+        if (singleCount <= 0 && multiCount <= 0 && judgeCount <= 0) {
+            return RestResponse.fail(2, "请至少设置一种题型的数量");
+        }
+        
         ExamPaperEditRequestVM paperVM = new ExamPaperEditRequestVM();
         paperVM.setSubjectId(model.getSubjectId());
         paperVM.setName(model.getName());
@@ -71,6 +86,11 @@ public class ExamPaperController extends BaseApiController {
         addRandomQuestions(paperVM, model.getSubjectId(), model.getTag(), 1, model.getSingleCount(), "单选题", model.getSingleScore());
         addRandomQuestions(paperVM, model.getSubjectId(), model.getTag(), 2, model.getMultiCount(), "多选题", model.getMultiScore());
         addRandomQuestions(paperVM, model.getSubjectId(), model.getTag(), 3, model.getJudgeCount(), "判断题", model.getJudgeScore());
+
+        // 验证是否找到了题目
+        if (paperVM.getTitleItems().isEmpty()) {
+            return RestResponse.fail(2, "未找到符合条件的题目，请检查题库标签和题型设置");
+        }
 
         int totalScore = paperVM.getTitleItems().stream().flatMap(t -> t.getQuestionItems().stream())
                 .mapToInt(q -> com.mindskip.xzs.utility.ExamUtil.scoreFromVM(q.getScore())).sum();
@@ -87,21 +107,17 @@ public class ExamPaperController extends BaseApiController {
         requestVM.setPageIndex(1);
         requestVM.setPageSize(10000);
         requestVM.setTag(model.getTag());
-
         PageInfo<Question> pageInfo = questionService.page(requestVM);
         List<Question> questions = pageInfo.getList();
-
         if (questions.isEmpty()) {
             return RestResponse.fail(2, "题库为空或未找到对应标签题目");
         }
-
         // Use subjectId from request if available, otherwise fallback to first
         // question's subject
         Integer subjectId = model.getSubjectId();
         if (subjectId == null) {
             subjectId = questions.get(0).getSubjectId();
         }
-
         ExamPaperEditRequestVM paperVM = new ExamPaperEditRequestVM();
         paperVM.setSubjectId(subjectId);
         paperVM.setName(model.getName());
@@ -109,10 +125,8 @@ public class ExamPaperController extends BaseApiController {
         paperVM.setLevel(1);
         paperVM.setPaperType(1);
         paperVM.setTitleItems(new ArrayList<>());
-
         Map<Integer, List<Question>> grouped = questions.stream()
                 .collect(Collectors.groupingBy(Question::getQuestionType));
-
         for (int i = 1; i <= 5; i++) {
             if (grouped.containsKey(i)) {
                 List<Question> qList = grouped.get(i);
@@ -120,7 +134,6 @@ public class ExamPaperController extends BaseApiController {
                 ExamPaperTitleItemVM titleItem = new ExamPaperTitleItemVM();
                 titleItem.setName(titleName);
                 titleItem.setQuestionItems(new ArrayList<>());
-
                 for (Question q : qList) {
                     QuestionEditRequestVM qVM = questionService.getQuestionEditRequestVM(q.getId());
                     titleItem.getQuestionItems().add(qVM);
@@ -128,11 +141,9 @@ public class ExamPaperController extends BaseApiController {
                 paperVM.getTitleItems().add(titleItem);
             }
         }
-
         int totalScore = paperVM.getTitleItems().stream().flatMap(t -> t.getQuestionItems().stream())
                 .mapToInt(q -> com.mindskip.xzs.utility.ExamUtil.scoreFromVM(q.getScore())).sum();
         paperVM.setScore(com.mindskip.xzs.utility.ExamUtil.scoreToVM(totalScore));
-
         ExamPaper examPaper = examPaperService.savePaperFromVM(paperVM, getCurrentUser());
         ExamPaperEditRequestVM newModel = examPaperService.examPaperToVM(examPaper.getId());
         return RestResponse.ok(newModel);
@@ -155,18 +166,15 @@ public class ExamPaperController extends BaseApiController {
         }
     }
 
-    private void addRandomQuestions(ExamPaperEditRequestVM paperVM, Integer subjectId, String tag, Integer type,
-            Integer count, String titleName, String scoreOverride) {
+    private void addRandomQuestions(ExamPaperEditRequestVM paperVM, Integer subjectId, String tag, Integer type, Integer count, String titleName, String scoreOverride) {
         if (count == null || count <= 0)
             return;
         List<Question> questions = questionService.selectRandomByTag(subjectId, tag, type, count);
         if (questions.isEmpty())
             return;
-
         ExamPaperTitleItemVM titleItem = new ExamPaperTitleItemVM();
         titleItem.setName(titleName);
         titleItem.setQuestionItems(new ArrayList<>());
-
         for (Question q : questions) {
             QuestionEditRequestVM qVM = questionService.getQuestionEditRequestVM(q.getId());
             if (scoreOverride != null && !scoreOverride.isEmpty()) {

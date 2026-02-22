@@ -35,5 +35,5 @@ public interface QuestionService extends BaseService<Question> {
 
     int importQuestions(List<QuestionImportVM> importList, Integer subjectId, String tag, Integer userId);
 
-    List<KeyValue> countByTagGroupByType(String tag);
+    List<KeyValue> countByTagGroupByType(String tag, Integer subjectId);
 }

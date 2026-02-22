@@ -28,9 +28,9 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoading: true,
   isLoggedIn: false,
-  login: async () => {},
-  logout: async () => {},
-  refreshUser: async () => {},
+  login: async () => { },
+  logout: async () => { },
+  refreshUser: async () => { },
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -38,6 +38,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const refreshUser = useCallback(async () => {
     try {
@@ -51,6 +52,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   useEffect(() => {
+    if (isLoggingOut) {
+      setIsLoading(false);
+      return;
+    }
     const checkSession = async () => {
       const cookie = await AsyncStorage.getItem('session_cookie');
       if (cookie) {
@@ -63,7 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsLoading(false);
     };
     checkSession();
-  }, [refreshUser]);
+  }, [refreshUser, isLoggingOut]);
 
   const login = useCallback(async (userName: string, password: string) => {
     const res = await authApi.login({ userName, password, remember: false });
@@ -75,13 +80,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [refreshUser]);
 
   const logout = useCallback(async () => {
-    await apiClient.clearSession();
-    setUser(null);
+    setIsLoggingOut(true);
     try {
       await authApi.logout();
     } catch {
       // best-effort server logout
     }
+    await apiClient.clearSession();
+    setUser(null);
+    setIsLoggingOut(false);
   }, []);
 
   return (

@@ -242,6 +242,12 @@ public class QuestionServiceImpl extends BaseServiceImpl<Question> implements Qu
                 addOptionItem(items, "B", row.getOptionB());
                 addOptionItem(items, "C", row.getOptionC());
                 addOptionItem(items, "D", row.getOptionD());
+                if (row.getOptionE() != null && !row.getOptionE().trim().isEmpty()) {
+                    addOptionItem(items, "E", row.getOptionE());
+                }
+                if (row.getOptionF() != null && !row.getOptionF().trim().isEmpty()) {
+                    addOptionItem(items, "F", row.getOptionF());
+                }
             } else if (questionType == QuestionTypeEnum.TrueFalse.getCode()) {
                 addOptionItem(items, "A", "正确");
                 addOptionItem(items, "B", "错误");
@@ -255,7 +261,7 @@ public class QuestionServiceImpl extends BaseServiceImpl<Question> implements Qu
             } else if (questionType == QuestionTypeEnum.MultipleChoice.getCode()) {
                 List<String> correctArray = new ArrayList<>();
                 for (char c : answer.toCharArray()) {
-                    if (c >= 'A' && c <= 'D') {
+                    if (c >= 'A' && c <= 'F') {
                         correctArray.add(String.valueOf(c));
                     }
                 }
@@ -330,7 +336,7 @@ public class QuestionServiceImpl extends BaseServiceImpl<Question> implements Qu
     }
 
     @Override
-    public List<KeyValue> countByTagGroupByType(String tag) {
+    public List<KeyValue> countByTagGroupByType(String tag, Integer subjectId) {
         return questionMapper.countByTagGroupByType(tag);
     }
 }

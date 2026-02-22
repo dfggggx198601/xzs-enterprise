@@ -39,7 +39,9 @@ public class UserController extends BaseApiController {
     private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public UserController(UserService userService, UserEventLogService userEventLogService, MessageService messageService, AuthenticationService authenticationService, ApplicationEventPublisher eventPublisher) {
+    public UserController(UserService userService, UserEventLogService userEventLogService,
+            MessageService messageService, AuthenticationService authenticationService,
+            ApplicationEventPublisher eventPublisher) {
         this.userService = userService;
         this.userEventLogService = userEventLogService;
         this.messageService = messageService;
@@ -53,7 +55,6 @@ public class UserController extends BaseApiController {
         UserResponseVM userVm = UserResponseVM.from(user);
         return RestResponse.ok(userVm);
     }
-
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public RestResponse register(@RequestBody @Valid UserRegisterVM model) {
@@ -77,7 +78,6 @@ public class UserController extends BaseApiController {
         return RestResponse.ok();
     }
 
-
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public RestResponse update(@RequestBody @Valid UserUpdateVM model) {
         if (StringUtils.isBlank(model.getBirthDay())) {
@@ -89,6 +89,19 @@ public class UserController extends BaseApiController {
         userService.updateByIdFilter(user);
         UserEventLog userEventLog = new UserEventLog(user.getId(), user.getUserName(), user.getRealName(), new Date());
         userEventLog.setContent(user.getUserName() + " 更新了个人资料");
+        eventPublisher.publishEvent(new UserEvent(userEventLog));
+        return RestResponse.ok();
+    }
+
+    @RequestMapping(value = "/updatePwd", method = RequestMethod.POST)
+    public RestResponse updatePwd(@RequestBody @Valid UserUpdatePwdVM model) {
+        User user = userService.selectById(getCurrentUser().getId());
+        String encodePwd = authenticationService.pwdEncode(model.getPassword());
+        user.setPassword(encodePwd);
+        user.setModifyTime(new Date());
+        userService.updateByIdFilter(user);
+        UserEventLog userEventLog = new UserEventLog(user.getId(), user.getUserName(), user.getRealName(), new Date());
+        userEventLog.setContent(user.getUserName() + " 更新了密码");
         eventPublisher.publishEvent(new UserEvent(userEventLog));
         return RestResponse.ok();
     }
@@ -109,7 +122,8 @@ public class UserController extends BaseApiController {
     public RestResponse<PageInfo<MessageResponseVM>> messagePageList(@RequestBody MessageRequestVM messageRequestVM) {
         messageRequestVM.setReceiveUserId(getCurrentUser().getId());
         PageInfo<MessageUser> messageUserPageInfo = messageService.studentPage(messageRequestVM);
-        List<Integer> ids = messageUserPageInfo.getList().stream().map(d -> d.getMessageId()).collect(Collectors.toList());
+        List<Integer> ids = messageUserPageInfo.getList().stream().map(d -> d.getMessageId())
+                .collect(Collectors.toList());
         List<Message> messages = ids.size() != 0 ? messageService.selectMessageByIds(ids) : null;
         PageInfo<MessageResponseVM> page = PageInfoHelper.copyMap(messageUserPageInfo, e -> {
             MessageResponseVM vm = modelMapper.map(e, MessageResponseVM.class);

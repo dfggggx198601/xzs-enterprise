@@ -1,16 +1,19 @@
 package com.mindskip.xzs.viewmodel.student.question.answer;
 
+import com.mindskip.xzs.domain.question.QuestionItemObject;
+import java.util.List;
 
 public class QuestionPageStudentResponseVM {
     private Integer id;
-
     private Integer questionType;
-
     private String createTime;
-
     private String subjectName;
-
     private String shortTitle;
+    private String fullTitle;
+    private String correctAnswer;
+    private String yourAnswer;
+    private List<QuestionItemObject> questionItems;
+    private String analyze;
 
     public Integer getId() {
         return id;
@@ -50,5 +53,45 @@ public class QuestionPageStudentResponseVM {
 
     public void setShortTitle(String shortTitle) {
         this.shortTitle = shortTitle;
+    }
+
+    public String getFullTitle() {
+        return fullTitle;
+    }
+
+    public void setFullTitle(String fullTitle) {
+        this.fullTitle = fullTitle;
+    }
+
+    public String getCorrectAnswer() {
+        return correctAnswer;
+    }
+
+    public void setCorrectAnswer(String correctAnswer) {
+        this.correctAnswer = correctAnswer;
+    }
+
+    public String getYourAnswer() {
+        return yourAnswer;
+    }
+
+    public void setYourAnswer(String yourAnswer) {
+        this.yourAnswer = yourAnswer;
+    }
+
+    public List<QuestionItemObject> getQuestionItems() {
+        return questionItems;
+    }
+
+    public void setQuestionItems(List<QuestionItemObject> questionItems) {
+        this.questionItems = questionItems;
+    }
+
+    public String getAnalyze() {
+        return analyze;
+    }
+
+    public void setAnalyze(String analyze) {
+        this.analyze = analyze;
     }
 }
