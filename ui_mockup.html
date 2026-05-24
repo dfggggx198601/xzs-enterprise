@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XZS 企业考试系统 - 完整 UI 概念设计</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #60a5fa;
+            --primary-dark: #1d4ed8;
+            --bg-body: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .controls button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .controls button:hover {
+            transform: translateY(-2px);
+            background: var(--primary-dark);
+        }
+
+        .controls button.active {
+            background: #0f172a;
+        }
+
+        /* Mobile Device Frame */
+        .device {
+            width: 390px;
+            height: 844px;
+            background: var(--bg-body);
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 12px #0f172a;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Device Notch */
+        .device::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #0f172a;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            z-index: 1000;
+        }
+
+        /* Screen Container */
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: var(--bg-body);
+            animation: fadeIn 0.3s ease-in-out;
+            overflow-y: auto;
+            padding-bottom: 80px;
+            /* Space for bottom nav */
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- LOGIN SCREEN --- */
+        #screen-login {
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+            justify-content: center;
+            padding: 40px 24px;
+        }
+
+        .login-logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            background: url('file:///Users/apple/.gemini/antigravity/brain/8ea3ac8c-6119-4953-9ab6-a449870db59d/icon_2_3d_cube_1771749509885.png') center/contain no-repeat;
+            filter: drop-shadow(0 20px 13px rgba(37, 99, 235, 0.3));
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 16px 16px 16px 48px;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            background: white;
+            font-size: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 10px;
+            cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+        }
+
+        /* --- HOME SCREEN --- */
+        .header-bg {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            padding: 60px 24px 80px 24px;
+            color: white;
+            position: relative;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+        }
+
+        .header-bg::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -20px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(20px);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .user-greeting h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .user-greeting p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .status-container {
+            display: flex;
+            gap: 16px;
+            padding: 0 24px;
+            margin-top: -50px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .status-card {
+            flex: 1;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        .status-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 20px;
+        }
+
+        .icon-blue {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .icon-green {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .status-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+
+        .status-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .content {
+            padding: 32px 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 20px;
+        }
+
+        .grid-menu {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .menu-icon-wrapper {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            font-size: 22px;
+        }
+
+        .bg-indigo {
+            background: #e0e7ff;
+            color: #4f46e5;
+        }
+
+        .bg-orange {
+            background: #ffedd5;
+            color: #ea580c;
+        }
+
+        .bg-teal {
+            background: #ccfbf1;
+            color: #0d9488;
+        }
+
+        .bg-rose {
+            background: #ffe4e6;
+            color: #e11d48;
+        }
+
+        .menu-item span {
+            font-size: 12px;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .banner {
+            background: linear-gradient(to right, #ffffff, #f0f9ff);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 16px;
+            border: 1px solid rgba(37, 99, 235, 0.1);
+            border-left: 4px solid var(--primary);
+        }
+
+        .banner-text h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .banner-text p {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .banner-img {
+            width: 60px;
+            height: 60px;
+            background: url('file:///Users/apple/.gemini/antigravity/brain/8ea3ac8c-6119-4953-9ab6-a449870db59d/icon_2_3d_cube_1771749509885.png') center/contain no-repeat;
+            filter: drop-shadow(0 4px 6px rgba(37, 99, 235, 0.2));
+        }
+
+        /* --- WRONG QUESTIONS SCREEN --- */
+        .top-nav {
+            padding: 50px 20px 20px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .top-nav h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .nav-back {
+            font-size: 20px;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .wq-list {
+            padding: 20px;
+        }
+
+        .wq-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .wq-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .wq-type {
+            background: #e0e7ff;
+            color: #4f46e5;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .wq-streak {
+            font-size: 12px;
+            color: var(--success);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .wq-streak img {
+            width: 14px;
+            height: 14px;
+        }
+
+        .wq-title {
+            font-size: 15px;
+            color: var(--text-main);
+            line-height: 1.5;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .wq-answers {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        .wq-answer-item {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .wq-answer-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .wq-label {
+            width: 70px;
+            color: var(--text-muted);
+        }
+
+        .wq-val-wrong {
+            color: var(--danger);
+            font-weight: 500;
+        }
+
+        .wq-val-right {
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        /* --- QUESTION DETAIL SCREEN --- */
+        .qd-content {
+            padding: 24px 20px;
+        }
+
+        .qd-title {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .option-item {
+            border: 2px solid rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .option-item.selected {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .option-item.correct {
+            border-color: var(--success);
+            background: #f0fdf4;
+        }
+
+        .option-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #cbd5e1;
+            margin-right: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .option-item.selected .option-icon {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        .option-item.selected .option-icon::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .option-text {
+            font-size: 16px;
+            color: var(--text-main);
+        }
+
+        .submit-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 24px;
+            background: white;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            z-index: 100;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            border-radius: 16px;
+            background: var(--primary);
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            box-shadow: 0 8px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        /* --- BOTTOM NAV --- */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 15px;
+            z-index: 50;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #94a3b8;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 10px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item i {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 30px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 0 0 4px 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="controls">
+        <button onclick="showScreen('login')" id="btn-login" class="active">登录页</button>
+        <button onclick="showScreen('home')" id="btn-home">首页</button>
+        <button onclick="showScreen('wq-list')" id="btn-wq-list">错题本</button>
+        <button onclick="showScreen('qd')" id="btn-qd">题目详情</button>
+    </div>
+
+    <div class="device">
+
+        <!-- ======================= 1. LOGIN SCREEN ======================= -->
+        <div id="screen-login" class="screen active">
+            <div class="login-logo"></div>
+            <div class="login-header">
+                <h1>XZS 企业考试系统</h1>
+                <p>内部培训评估与知识管理平台</p>
+            </div>
+
+            <form style="width: 100%; margin-top: 20px;">
+                <div class="input-group">
+                    <i class="fa-regular fa-user"></i>
+                    <input type="text" class="login-input" placeholder="请输入用户名" value="student1">
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" class="login-input" placeholder="请输入密码" value="123456">
+                </div>
+                <button type="button" class="btn-login" onclick="showScreen('home')">登录</button>
+            </form>
+
+            <div style="text-align: center; margin-top: 40px; color: #94a3b8; font-size: 13px;">
+                Powered by Mindskip
+            </div>
+        </div>
+
+        <!-- ======================= 2. HOME SCREEN ======================= -->
+        <div id="screen-home" class="screen">
+            <div class="header-bg">
+                <div class="header-top">
+                    <div class="user-greeting">
+                        <h1>你好，张三 👋</h1>
+                        <p>记录学习点滴，铸就专业实力</p>
+                    </div>
+                    <div class="avatar">张</div>
+                </div>
+            </div>
+
+            <div class="status-container">
+                <div class="status-card">
+                    <div class="status-icon icon-blue"><i class="fa-solid fa-file-signature"></i></div>
+                    <div class="status-value">4</div>
+                    <div class="status-label">可用试卷</div>
+                </div>
+                <div class="status-card">
+                    <div class="status-icon icon-green"><i class="fa-solid fa-bell"></i></div>
+                    <div class="status-value">2</div>
+                    <div class="status-label">未读消息</div>
+                </div>
+            </div>
+
+            <div class="content">
+                <h2 class="section-title">快速入口</h2>
+                <div class="grid-menu">
+                    <div class="menu-item">
+                        <div class="menu-icon-wrapper bg-indigo"><i class="fa-solid fa-file-lines"></i></div>
+                        <span>试卷中心</span>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-icon-wrapper bg-orange"><i class="fa-solid fa-bolt"></i></div><span>每日一练</span>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-icon-wrapper bg-teal"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                        <span>考试记录</span>
+                    </div>
+                    <div class="menu-item" onclick="showScreen('wq-list')">
+                        <div class="menu-icon-wrapper bg-rose"><i class="fa-solid fa-book-journal-whills"></i></div>
+                        <span>错题本</span>
+                    </div>
+                </div>
+
+                <h2 class="section-title">最新动态</h2>
+                <div class="banner">
+                    <div class="banner-text">
+                        <h3>知识魔方挑战</h3>
+                        <p>完成本周挑战解锁新成就图标</p>
+                    </div>
+                    <div class="banner-img"></div>
+                </div>
+
+                <div class="banner">
+                    <div class="banner-text">
+                        <h3>错题消灭计划</h3>
+                        <p>您有 5 道错题待复习，保持连对记录！</p>
+                    </div>
+                    <div
+                        style="width: 50px; height: 50px; display:flex; align-items:center; justify-content:center; color:#ef4444; font-size: 28px;">
+                        <i class="fa-solid fa-fire"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shared Bottom Nav -->
+            <div class="bottom-nav">
+                <div class="nav-item active" onclick="showScreen('home')"><i
+                        class="fa-solid fa-house"></i><span>首页</span></div>
+                <div class="nav-item"><i class="fa-solid fa-layer-group"></i><span>试卷</span></div>
+                <div class="nav-item"><i class="fa-solid fa-chart-simple"></i><span>记录</span></div>
+                <div class="nav-item" onclick="showScreen('wq-list')"><i class="fa-solid fa-book"></i><span>错题</span>
+                </div>
+                <div class="nav-item"><i class="fa-regular fa-user"></i><span>我的</span></div>
+            </div>
+        </div>
+
+        <!-- ======================= 3. WRONG QUESTIONS SCREEN ======================= -->
+        <div id="screen-wq-list" class="screen">
+            <div class="top-nav">
+                <i class="fa-solid fa-chevron-left nav-back" onclick="showScreen('home')"></i>
+                <h2>错题本</h2>
+                <div style="width: 20px;"></div> <!-- Spacer -->
+            </div>
+
+            <div class="wq-list">
+                <!-- Question 1 -->
+                <div class="wq-card" onclick="showScreen('qd')">
+                    <div class="wq-header">
+                        <span class="wq-type">判断题</span>
+                        <span class="wq-streak"><i class="fa-solid fa-check-circle"></i> 1</span>
+                    </div>
+                    <div class="wq-title">鉴定单位可以拒绝受理公示的鉴定业务范围之外的鉴定申请。</div>
+                    <div class="wq-answers">
+                        <div class="wq-answer-item">
+                            <span class="wq-label">你的答案:</span>
+                            <span class="wq-val-wrong">B. 错误</span>
+                        </div>
+                        <div class="wq-answer-item">
+                            <span class="wq-label">正确答案:</span>
+                            <span class="wq-val-right">A. 正确</span>
+                        </div>
+                    </div>
+                    <div
+                        style="margin-top: 12px; font-size: 11px; color: #94a3b8; display:flex; justify-content:space-between;">
+                        <span>2026-02-21 13:30</span>
+                        <span>现金业务科</span>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="wq-card" onclick="showScreen('qd')">
+                    <div class="wq-header">
+                        <span class="wq-type" style="background:#fef08a; color:#a16207;">多选题</span>
+                        <!-- No streak -->
+                    </div>
+                    <div class="wq-title">关于2015年版第五套人民币100元纸币应用的双色横号码，下列说法正确的是。</div>
+                    <div class="wq-answers">
+                        <div class="wq-answer-item">
+                            <span class="wq-label">你的答案:</span>
+                            <span class="wq-val-wrong" style="display:block; flex:1;">B. 采用了国际标准字型,更加易于被设备识别</span>
+                        </div>
+                        <div class="wq-answer-item">
+                            <span class="wq-label">正确答案:</span>
+                            <span class="wq-val-right" style="display:block; flex:1;">A. 它是钞票... <br>B. 采用了... <br>C.
+                                号码前四... <br>D. 由数字...</span>
+                        </div>
+                    </div>
+                    <div
+                        style="margin-top: 12px; font-size: 11px; color: #94a3b8; display:flex; justify-content:space-between;">
+                        <span>2026-02-21 13:30</span>
+                        <span>现金业务科</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================= 4. QUESTION DETAIL SCREEN ======================= -->
+        <div id="screen-qd" class="screen">
+            <div class="top-nav">
+                <i class="fa-solid fa-chevron-left nav-back" onclick="showScreen('wq-list')"></i>
+                <h2>题目详情</h2>
+                <div style="width: 20px;"></div>
+            </div>
+
+            <div class="qd-content">
+                <div style="margin-bottom: 12px;">
+                    <span class="wq-type">判断题</span>
+                </div>
+                <div class="qd-title">鉴定单位可以拒绝受理公示的鉴定业务范围之外的鉴定申请。</div>
+
+                <div class="option-item selected" onclick="toggleOption(this)">
+                    <div class="option-icon"></div>
+                    <div class="option-text">A. 正确</div>
+                </div>
+
+                <div class="option-item" onclick="toggleOption(this)">
+                    <div class="option-icon"></div>
+                    <div class="option-text">B. 错误</div>
+                </div>
+            </div>
+
+            <div class="submit-bar">
+                <button class="submit-btn" onclick="showScreen('wq-list')">提交答案</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function showScreen(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            // Show target screen
+            document.getElementById('screen-' + screenId).classList.add('active');
+
+            // Update control buttons
+            document.querySelectorAll('.controls button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + screenId).classList.add('active');
+        }
+
+        // Simple toggle logic for the options in Question Detail
+        function toggleOption(element) {
+            document.querySelectorAll('.option-item').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+.git
+*.log
+*.md
+LICENSE
+sql/
+
+# Node modules (will be installed in container)
+source/vue/xzs-admin/node_modules
+source/vue/xzs-student/node_modules
+source/vue/xzs-admin/admin
+source/vue/xzs-student/student
+
+# RN app (not needed for server build)
+source/rn
+
+# Maven target (will be built in container)
+source/xzs/target
+
+# Static build artifacts (will be built in container)
+source/xzs/src/main/resources/static/admin
+source/xzs/src/main/resources/static/student

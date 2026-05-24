@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XZS Revamp Preview</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --panel: #ffffff;
+      --ink: #1f2937;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --accent: #0f766e;
+      --accent-soft: #dff4f2;
+      --warn: #b45309;
+      --danger: #b91c1c;
+      --shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "PingFang SC", "Noto Sans SC", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at top right, #dbeafe 0%, var(--bg) 40%);
+      padding: 28px;
+    }
+    .page {
+      max-width: 1380px;
+      margin: 0 auto 34px auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%);
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 0.3px;
+    }
+    .hero p { margin: 6px 0 0 0; color: var(--muted); }
+    .pill {
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .grid4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      padding: 18px 20px;
+    }
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      background: #fff;
+    }
+    .metric .k { color: var(--muted); font-size: 13px; }
+    .metric .v { font-size: 28px; font-weight: 700; margin-top: 6px; }
+    .metric .s { font-size: 12px; margin-top: 6px; color: var(--accent); }
+    .panel-wrap {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 14px;
+      padding: 0 20px 20px 20px;
+    }
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden;
+    }
+    .panel h3 {
+      margin: 0;
+      padding: 14px 16px;
+      font-size: 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fcfdff;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td {
+      text-align: left;
+      padding: 11px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 13px;
+    }
+    th { color: var(--muted); font-weight: 600; }
+    .badge {
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+    }
+    .ok { background: #dcfce7; color: #166534; }
+    .risk { background: #fee2e2; color: #991b1b; }
+    .mid { background: #fef3c7; color: #92400e; }
+    .bars { padding: 12px 16px 16px 16px; }
+    .row { margin: 10px 0; }
+    .row .label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+    .bar {
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .fill {
+      height: 100%;
+      background: linear-gradient(90deg, #14b8a6, #0ea5e9);
+    }
+
+    .student {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 14px;
+      padding: 18px 20px 20px 20px;
+    }
+    .qa-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .qa-title { font-weight: 700; line-height: 1.5; }
+    .qa-meta { margin-top: 8px; color: var(--muted); font-size: 12px; display: flex; gap: 12px; }
+    .tags { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag {
+      background: #ecfeff;
+      color: #0e7490;
+      border: 1px solid #bae6fd;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    .source {
+      border: 1px dashed #fdba74;
+      background: #fff7ed;
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--warn);
+    }
+  </style>
+</head>
+<body>
+  <section class="page" id="admin-preview">
+    <div class="hero">
+      <div>
+        <h1>考试通报中心（改版预览）</h1>
+        <p>突出“通过率 / 平均分 / 薄弱点”，用于领导汇报和复训决策</p>
+      </div>
+      <div class="pill">2026Q2 · 反洗钱专项</div>
+    </div>
+    <div class="grid4">
+      <div class="metric"><div class="k">参考人数</div><div class="v">286</div><div class="s">较上期 +8.2%</div></div>
+      <div class="metric"><div class="k">通过率</div><div class="v">86.4%</div><div class="s">目标线 ≥ 85%</div></div>
+      <div class="metric"><div class="k">平均分</div><div class="v">83.7</div><div class="s">较上期 +2.9 分</div></div>
+      <div class="metric"><div class="k">薄弱指数</div><div class="v">31.2</div><div class="s">高风险题型：简答题</div></div>
+    </div>
+    <div class="panel-wrap">
+      <div class="panel">
+        <h3>分部门标签表现（反洗钱岗位通报）</h3>
+        <table>
+          <thead><tr><th>部门标签</th><th>参考人数</th><th>通过率</th><th>平均分</th><th>状态</th></tr></thead>
+          <tbody>
+            <tr><td>分行反洗钱岗</td><td>118</td><td>91.5%</td><td>87.1</td><td><span class="badge ok">稳定</span></td></tr>
+            <tr><td>营业网点柜面岗</td><td>96</td><td>82.3%</td><td>80.4</td><td><span class="badge mid">关注</span></td></tr>
+            <tr><td>新入职培训岗</td><td>72</td><td>76.4%</td><td>77.2</td><td><span class="badge risk">重点复训</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h3>薄弱知识维度（错题率）</h3>
+        <div class="bars">
+          <div class="row"><div class="label">简答题 · 可疑交易判断（48.2%）</div><div class="bar"><div class="fill" style="width:48.2%"></div></div></div>
+          <div class="row"><div class="label">多选题 · 客户身份识别（36.7%）</div><div class="bar"><div class="fill" style="width:36.7%"></div></div></div>
+          <div class="row"><div class="label">判断题 · 大额交易报送（28.4%）</div><div class="bar"><div class="fill" style="width:28.4%"></div></div></div>
+          <div class="row"><div class="label">单选题 · 法规时限条款（17.1%）</div><div class="bar"><div class="fill" style="width:17.1%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="student-preview">
+    <div class="hero">
+      <div>
+        <h1>错题复盘中心（改版预览）</h1>
+        <p>强化“制度来源 + 错因分析 + 复训建议”，让学员知道该补什么</p>
+      </div>
+      <div class="pill">我的错题：24 题</div>
+    </div>
+    <div class="student">
+      <div>
+        <div class="qa-card">
+          <div class="qa-title">客户在短期内发生多笔分拆交易，应优先触发哪项反洗钱动作？</div>
+          <div class="qa-meta"><span>题型：多选题</span><span>难度：中等</span><span>最近错题时间：2026-04-16</span></div>
+          <div class="tags"><span class="tag">客户身份识别</span><span class="tag">可疑交易识别</span></div>
+          <div class="source">制度来源：反洗钱客户尽职调查管理办法（2025修订） 第三章第12条</div>
+        </div>
+        <div class="qa-card">
+          <div class="qa-title">大额交易报送的法定时限是？</div>
+          <div class="qa-meta"><span>题型：单选题</span><span>难度：基础</span><span>最近错题时间：2026-04-15</span></div>
+          <div class="tags"><span class="tag">报送时限</span><span class="tag">监管规则</span></div>
+          <div class="source">制度来源：大额交易和可疑交易报告管理办法 第五条</div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>本周复训建议</h3>
+        <table>
+          <thead><tr><th>知识点</th><th>错题率</th><th>建议动作</th></tr></thead>
+          <tbody>
+            <tr><td>可疑交易识别</td><td>41%</td><td>先看制度条款，再做10题专项</td></tr>
+            <tr><td>客户尽调流程</td><td>35%</td><td>复盘高频错题与解析</td></tr>
+            <tr><td>报送时限规则</td><td>22%</td><td>背记关键时限清单</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

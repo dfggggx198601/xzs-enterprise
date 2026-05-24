@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mindskip.xzs.repository.DailyPracticeMapper">
+  <resultMap id="BaseResultMap" type="com.mindskip.xzs.domain.DailyPractice">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="grade_level" jdbcType="INTEGER" property="gradeLevel" />
+    <result column="subject_id" jdbcType="INTEGER" property="subjectId" />
+    <result column="tag" jdbcType="VARCHAR" property="tag" />
+    <result column="question_count" jdbcType="INTEGER" property="questionCount" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_user" jdbcType="INTEGER" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, title, description, grade_level, subject_id, tag, question_count, status,
+    create_user, create_time, deleted
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_daily_practice
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_daily_practice
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.mindskip.xzs.domain.DailyPractice" useGeneratedKeys="true" keyProperty="id">
+    insert into t_daily_practice (id, title, description, grade_level, subject_id, tag,
+      question_count, status, create_user, create_time, deleted)
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+      #{gradeLevel,jdbcType=INTEGER}, #{subjectId,jdbcType=INTEGER}, #{tag,jdbcType=VARCHAR},
+      #{questionCount,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{createUser,jdbcType=INTEGER},
+      #{createTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mindskip.xzs.domain.DailyPractice" useGeneratedKeys="true" keyProperty="id">
+    insert into t_daily_practice
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">id,</if>
+      <if test="title != null">title,</if>
+      <if test="description != null">description,</if>
+      <if test="gradeLevel != null">grade_level,</if>
+      <if test="subjectId != null">subject_id,</if>
+      <if test="tag != null">tag,</if>
+      <if test="questionCount != null">question_count,</if>
+      <if test="status != null">status,</if>
+      <if test="createUser != null">create_user,</if>
+      <if test="createTime != null">create_time,</if>
+      <if test="deleted != null">deleted,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">#{id,jdbcType=INTEGER},</if>
+      <if test="title != null">#{title,jdbcType=VARCHAR},</if>
+      <if test="description != null">#{description,jdbcType=VARCHAR},</if>
+      <if test="gradeLevel != null">#{gradeLevel,jdbcType=INTEGER},</if>
+      <if test="subjectId != null">#{subjectId,jdbcType=INTEGER},</if>
+      <if test="tag != null">#{tag,jdbcType=VARCHAR},</if>
+      <if test="questionCount != null">#{questionCount,jdbcType=INTEGER},</if>
+      <if test="status != null">#{status,jdbcType=INTEGER},</if>
+      <if test="createUser != null">#{createUser,jdbcType=INTEGER},</if>
+      <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+      <if test="deleted != null">#{deleted,jdbcType=BIT},</if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mindskip.xzs.domain.DailyPractice">
+    update t_daily_practice
+    <set>
+      <if test="title != null">title = #{title,jdbcType=VARCHAR},</if>
+      <if test="description != null">description = #{description,jdbcType=VARCHAR},</if>
+      <if test="gradeLevel != null">grade_level = #{gradeLevel,jdbcType=INTEGER},</if>
+      <if test="subjectId != null">subject_id = #{subjectId,jdbcType=INTEGER},</if>
+      <if test="tag != null">tag = #{tag,jdbcType=VARCHAR},</if>
+      <if test="questionCount != null">question_count = #{questionCount,jdbcType=INTEGER},</if>
+      <if test="status != null">status = #{status,jdbcType=INTEGER},</if>
+      <if test="createUser != null">create_user = #{createUser,jdbcType=INTEGER},</if>
+      <if test="createTime != null">create_time = #{createTime,jdbcType=TIMESTAMP},</if>
+      <if test="deleted != null">deleted = #{deleted,jdbcType=BIT},</if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mindskip.xzs.domain.DailyPractice">
+    update t_daily_practice
+    set title = #{title,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      grade_level = #{gradeLevel,jdbcType=INTEGER},
+      subject_id = #{subjectId,jdbcType=INTEGER},
+      tag = #{tag,jdbcType=VARCHAR},
+      question_count = #{questionCount,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      create_user = #{createUser,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="page" resultMap="BaseResultMap" parameterType="com.mindskip.xzs.viewmodel.admin.dailypractice.DailyPracticePageRequestVM">
+    select
+    <include refid="Base_Column_List" />
+    from t_daily_practice
+    <where>
+        and deleted=0
+      <if test="gradeLevel != null">
+        and grade_level = #{gradeLevel}
+      </if>
+    </where>
+  </select>
+
+  <select id="getByGradeLevel" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    from t_daily_practice
+    where deleted=0
+    and status = 1
+    and grade_level = #{gradeLevel,jdbcType=INTEGER}
+  </select>
+
+</mapper>
