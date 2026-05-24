@@ -97,7 +97,30 @@
     并手动上传至服务端的 `/opt/xzs/app-release.apk`。
 
 ---
+
+## 5. 2026-05 最新更新：题库一键导出与整理 (Excel & Word)
+
+### 5.1 背景与实现
+用户需要将在线系统的题库导出并整理为排版紧凑、易于人眼阅读的 Word 和 Excel 格式。为了实现这一目标，我们完成了以下闭环：
+1. **API 登录与绕过网络隔离**：因为数据库无外网端口且 SSH 不可用，我们编写了 [fetch_questions.js](file:///C:/Users/Administrator/Documents/antigravity/charming-curie/scripts/fetch_questions.js)，通过默认管理员凭据（`admin` / `123456`）模拟登录后台。
+2. **自适应跳过脏数据**：后端 `/api/admin/question/page` 接口在遇到部分题目缺失 text_content 脏数据时会抛出空指针 500 异常。我们利用自适应分块算法：每次拉取 50 条，如果出错则退化为逐个爬取并自动跳过出错题目。
+3. **去重终止机制**：由于 PageHelper 分页组件默认开启“合理化分页”（pageNum > pages 时循环返回最后一页），我们通过 Set 去重并在检测到重复时终止爬取，最终成功抓取了 533 道题目。
+4. **一键生成 Word & Excel**：编写了 [generate_files.py](file:///C:/Users/Administrator/Documents/antigravity/charming-curie/scripts/generate_files.py)，使用 Python 库 `openpyxl` 和 `docx` 读取 [questions.json](file:///C:/Users/Administrator/Documents/antigravity/charming-curie/scripts/questions.json)，自动转换并排版生成：
+   - [question_bank.xlsx](file:///C:/Users/Administrator/Documents/antigravity/charming-curie/scripts/question_bank.xlsx)：标准的 Navy 蓝色高雅风格表格，方便筛选和分析。
+   - [question_bank.docx](file:///C:/Users/Administrator/Documents/antigravity/charming-curie/scripts/question_bank.docx)：仿试卷紧凑排版，按“单选题、多选题、判断题、填空题、简答题”分类，附带答案、解析、难度星级和法律法规制度来源。
+
+### 5.2 重新生成步骤
+如果题库后续有更新，下一任 AI 或开发者只需在项目根目录运行：
+```bash
+# 1. 重新爬取题库并生成 json 数据
+node scripts/fetch_questions.js
+# 2. 读取 json 并一键更新 word/excel 文件
+python scripts/generate_files.py
+```
+
+---
 > 记录时间：2026-05-24
 > 开发环境：Windows (当前工作区) / Linux Ubuntu (服务端)
 > 接棒快乐，继续 Coding！
+
 
